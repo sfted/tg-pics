@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TgPics (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TgPics (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
