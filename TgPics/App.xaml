@@ -7,9 +7,19 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <FontFamily x:Key="ContentControlThemeFontFamily">JetBrains Mono</FontFamily>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <FontFamily x:Key="IconsFont">Assets/Fonts/material_icons.ttf#Material Icons Round</FontFamily>
+
+            <Style TargetType="FontIcon">
+                <Setter Property="FontFamily" Value="{StaticResource IconsFont}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

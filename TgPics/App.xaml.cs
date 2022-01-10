@@ -13,7 +13,7 @@ namespace TgPics
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            mainWindow = new();
+            mainWindow = new MainWindow();
             mainWindow.Activate();
         }
     }

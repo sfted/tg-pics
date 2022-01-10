@@ -5,4 +5,67 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:TgPics"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" />
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <NavigationView
+            IsSettingsVisible="False"
+            PaneDisplayMode="Top">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="ВКонтакте">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="Assets/Icons/vk_logo.png" />
+                    </NavigationViewItem.Icon>
+
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Закладки">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xe838;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+
+                        <NavigationViewItem
+                            Content="Новости"
+                            IsEnabled="False">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xf009;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+
+                        <NavigationViewItem
+                            Content="Сообщества"
+                            IsEnabled="False">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xf233;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+
+                        <NavigationViewItem
+                            Content="Фотографии"
+                            IsEnabled="False">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xe3f4;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    Content="Instagram"
+                    IsEnabled="False">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="Assets/Icons/ig_icon.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem>
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xe8b8;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+        </NavigationView>
+    </Grid>
+</Window>
