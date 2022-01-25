@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>TgPics</RootNamespace>
+    <RootNamespace>TgPics.Desktop</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
@@ -18,6 +18,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\Icons\ig_icon.png" />
+    <None Remove="Assets\Icons\tg_icon.png" />
+    <None Remove="Utils\Converters\Converters.xaml" />
+    <None Remove="Views\Pages\SettingsPage.xaml" />
+    <None Remove="Views\Pages\TelegramLoginPage.xaml" />
+    <None Remove="Views\Pages\TwoFACodePage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,12 +48,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Fonts\material_icons.ttf" />
-    <Resource Include="Assets\Icons\vk_logo.png" />
+    <Resource Include="Assets\Icons\vk_icon.png" />
     <Resource Include="Assets\LockScreenLogo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\Fonts\material_icons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Utils\Converters\Converters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\TwoFACodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\TelegramLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

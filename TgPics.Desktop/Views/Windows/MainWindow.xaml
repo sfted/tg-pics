@@ -1,20 +1,22 @@
 ﻿<Window
-    x:Class="TgPics.MainWindow"
+    x:Class="TgPics.Desktop.Views.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:TgPics"
+    xmlns:local="using:TgPics.Desktop.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Loaded="OnGridLoaded">
         <NavigationView
             IsSettingsVisible="False"
             PaneDisplayMode="Top">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="ВКонтакте">
                     <NavigationViewItem.Icon>
-                        <ImageIcon Source="Assets/Icons/vk_logo.png" />
+                        <ImageIcon Source="{StaticResource VkIcon}" />
                     </NavigationViewItem.Icon>
 
                     <NavigationViewItem.MenuItems>
@@ -54,7 +56,7 @@
                     Content="Instagram"
                     IsEnabled="False">
                     <NavigationViewItem.Icon>
-                        <ImageIcon Source="Assets/Icons/ig_icon.png" />
+                        <ImageIcon Source="{StaticResource IgIcon}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
@@ -66,6 +68,17 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
+
+            <ScrollViewer HorizontalScrollMode="Disabled">
+                <Border
+                    Padding="16"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <Frame
+                        x:Name="frame"
+                        MaxWidth="750"
+                        Loaded="OnFrameLoaded" />
+                </Border>
+            </ScrollViewer>
         </NavigationView>
     </Grid>
 </Window>
