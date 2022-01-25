@@ -41,6 +41,7 @@ UserService.Users
     app.UseMiddleware<JwtMiddleware>();
 
     app.MapControllers();
+    app.UseStaticFiles();
 }
 
 app.Run();

@@ -6,7 +6,6 @@ using TgPics.WebApi.Models;
 using TgPics.WebApi.Services;
 
 [ApiController]
-[Route("[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService service;
@@ -16,7 +15,7 @@ public class UsersController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("authenticate")]
+    [HttpPost("login")]
     public IActionResult Authenticate(AuthenticateRequest model)
     {
         var response = service.Authenticate(model);
@@ -28,7 +27,7 @@ public class UsersController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("users")]
     public IActionResult GetAll()
     {
         var users = service.GetAll();
