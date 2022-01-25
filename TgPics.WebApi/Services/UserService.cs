@@ -19,6 +19,7 @@ public interface IUserService
 public class UserService : IUserService
 {
     // users hardcoded for simplicity, store in a db with hashed passwords in production applications
+    // дадададада
     public readonly static List<User> Users = new()
     {
         new User { Id = 1, Username = "admin" }

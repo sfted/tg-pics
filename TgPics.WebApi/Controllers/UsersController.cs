@@ -6,6 +6,7 @@ using TgPics.WebApi.Models;
 using TgPics.WebApi.Services;
 
 [ApiController]
+[Route("api")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService service;

@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     // configure DI for application services
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IPostsService, PostsService>();
 }
 
 var app = builder.Build();

@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TgPics.Web.API/Key.cs
+/TgPics.WebApi/Helpers/Secret.cs
