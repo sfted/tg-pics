@@ -34,7 +34,7 @@ public class JwtMiddleware
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(settings.Secret);
+            var key = Encoding.ASCII.GetBytes(settings.WebApiKey);
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

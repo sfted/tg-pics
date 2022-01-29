@@ -22,12 +22,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-app.Services
-    .GetRequiredService<IOptions<AppSettings>>()
-    .Value.Secret = builder.Configuration["WebApiKey"];
+var settings = app.Services
+    .GetRequiredService<IOptions<AppSettings>>().Value;
 
-UserService.Users
-    .FirstOrDefault(u => u.Id == 1).Password =
+settings.WebApiKey = builder.Configuration["WebApiKey"];
+settings.BotToken = builder.Configuration["BotToken"];
+
+UserService.Users[0].Password =
     builder.Configuration["AdminPwd"];
 
 // configure HTTP request pipeline

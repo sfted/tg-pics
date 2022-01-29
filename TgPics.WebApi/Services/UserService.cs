@@ -61,7 +61,7 @@ public class UserService : IUserService
     {
         // generate token that is valid for 7 days
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(settings.Secret);
+        var key = Encoding.ASCII.GetBytes(settings.WebApiKey);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
