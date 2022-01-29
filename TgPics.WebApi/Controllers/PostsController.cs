@@ -38,4 +38,17 @@ public class PostsController : ControllerBase
     {
         return Ok(service.GetAll());
     }
+
+    [Authorize]
+    [HttpPost("removeall")]
+    public IActionResult RemoveAll(string confirmation)
+    {
+        if (confirmation == "yeah, kill 'em all.")
+        {
+            service.RemoveAll();
+            return Ok();
+        }
+        else return BadRequest(
+            "Confirm deletion by passing 'confirmation=yeah, kill 'em all.'");
+    }
 }

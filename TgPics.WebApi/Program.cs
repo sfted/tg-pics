@@ -25,9 +25,13 @@ services.AddHostedService<BotHostedService>(s =>
 
 var app = builder.Build();
 
-app.Services
+var settings = app.Services
     .GetRequiredService<IOptions<AppSettings>>()
-    .Value.WebApiKey = builder.Configuration["WebApiKey"];
+    .Value;
+
+settings.WebApiKey = builder.Configuration["WebApiKey"];
+settings.PostPerDay = 
+    Convert.ToInt32(builder.Configuration["PostsPerDay"]);
 
 UserService.Users[0].Password =
     builder.Configuration["AdminPwd"];
