@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Net;
 using TgPics.Core.Models;
 
 namespace TgPics.WebApi.Services;
@@ -11,7 +10,7 @@ public interface IPostsService
     public List<Post> GetAll();
 }
 
-public class PostsService: IPostsService
+public class PostsService : IPostsService
 {
     public void Add(Post post)
     {
@@ -20,10 +19,7 @@ public class PostsService: IPostsService
         foreach (var pic in post.Pictures)
         {
             if (pic.Data == null && pic.Source != null)
-            {
-                using var webClient = new WebClient();
-                pic.Data = webClient.DownloadData(pic.Source);
-            }
+                pic.Load();
         }
 
         database.Posts.Add(post);

@@ -6,44 +6,40 @@ using TgPics.WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// add services to DI container
-{
-    var services = builder.Services;
-    services.AddCors();
-    services.AddControllers();
+var services = builder.Services;
 
-    // configure strongly typed settings object
-    services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+services.AddCors();
+services.AddControllers();
 
-    // configure DI for application services
-    services.AddScoped<IUserService, UserService>();
-    services.AddScoped<IPostsService, PostsService>();
-}
+services.Configure<AppSettings>(
+    builder.Configuration.GetSection("AppSettings"));
+
+services.AddScoped<IUserService, UserService>();
+services.AddScoped<IPostsService, PostsService>();
+
+services.AddHostedService<BotHostedService>(s =>
+    new BotHostedService(
+        builder.Configuration["BotToken"],
+        builder.Configuration["TgAdminChatId"],
+        builder.Configuration["TgChannelUsername"]));
 
 var app = builder.Build();
 
-var settings = app.Services
-    .GetRequiredService<IOptions<AppSettings>>().Value;
-
-settings.WebApiKey = builder.Configuration["WebApiKey"];
-settings.BotToken = builder.Configuration["BotToken"];
+app.Services
+    .GetRequiredService<IOptions<AppSettings>>()
+    .Value.WebApiKey = builder.Configuration["WebApiKey"];
 
 UserService.Users[0].Password =
     builder.Configuration["AdminPwd"];
 
-// configure HTTP request pipeline
-{
-    // global cors policy
-    app.UseCors(x => x
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
+app.UseCors(x => x
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
-    // custom jwt auth middleware
-    app.UseMiddleware<JwtMiddleware>();
+app.UseMiddleware<JwtMiddleware>();
 
-    app.MapControllers();
-    app.UseStaticFiles();
-}
+app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();
