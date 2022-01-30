@@ -4,10 +4,7 @@ using TgPics.Core.Entities;
 
 public class AuthenticateResponse
 {
-    public int Id { get; set; }
-    public string Username { get; set; }
-    public string Token { get; set; }
-
+    public AuthenticateResponse() { }
 
     public AuthenticateResponse(User user, string token)
     {
@@ -15,4 +12,8 @@ public class AuthenticateResponse
         Username = user.Username;
         Token = token;
     }
+
+    public int Id { get; set; }
+    public string Username { get; set; }
+    public string Token { get; set; }
 }
