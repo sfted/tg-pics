@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TgPics.WebApi\TgPics.WebApi.csproj" />
+    <ProjectReference Include="..\TgPics.Core\TgPics.Core.csproj" />
   </ItemGroup>
 
 </Project>

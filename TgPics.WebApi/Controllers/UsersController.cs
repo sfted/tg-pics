@@ -1,7 +1,7 @@
 ﻿namespace TgPics.WebApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using TgPics.WebApi.Models;
+using TgPics.Core.Models;
 using TgPics.WebApi.Services;
 
 [ApiController]

@@ -5,9 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TgPics.WebApi.Entities;
+using TgPics.Core.Entities;
+using TgPics.Core.Models;
 using TgPics.WebApi.Helpers;
-using TgPics.WebApi.Models;
 
 public interface IUserService
 {

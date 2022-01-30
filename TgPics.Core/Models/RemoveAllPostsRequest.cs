@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Models;
+﻿namespace TgPics.Core.Models;
 
 public class RemoveAllPostsRequest
 {

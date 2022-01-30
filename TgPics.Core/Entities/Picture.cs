@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace TgPics.Core.Models;
+namespace TgPics.Core.Entities;
 
 public class Picture
 {

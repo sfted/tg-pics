@@ -2,9 +2,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using TgPics.Core.Entities;
 using TgPics.Core.Models;
 using TgPics.WebApi.Helpers;
-using TgPics.WebApi.Models;
 
 public interface IPostsService
 {

@@ -1,6 +1,6 @@
-﻿namespace TgPics.WebApi.Models;
+﻿namespace TgPics.Core.Models;
 
-using TgPics.WebApi.Entities;
+using TgPics.Core.Entities;
 
 public class AuthenticateResponse
 {

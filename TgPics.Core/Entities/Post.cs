@@ -1,4 +1,4 @@
-﻿namespace TgPics.Core.Models;
+﻿namespace TgPics.Core.Entities;
 
 public class Post
 {

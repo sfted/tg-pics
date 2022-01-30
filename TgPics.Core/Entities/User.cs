@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Entities;
+﻿namespace TgPics.Core.Entities;
 
 using System.Text.Json.Serialization;
 

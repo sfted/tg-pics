@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgPics.Core.Models;
+using TgPics.Core.Entities;
 
 namespace TgPics.WebApi.Services;
 

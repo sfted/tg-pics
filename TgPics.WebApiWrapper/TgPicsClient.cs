@@ -1,7 +1,7 @@
 ﻿namespace TgPics.WebApiWrapper;
 
 using RestSharp;
-using TgPics.WebApi.Models;
+using TgPics.Core.Models;
 
 public class TgPicsClient
 {
@@ -34,7 +34,7 @@ public class TgPicsClient
 
     public async Task RemoveAllPostsAsync(RemoveAllPostsRequest parameters) =>
         await Post(parameters, "api/posts/removeall", token);
-    
+
 
     private async Task<AuthenticateResponse> AuthAndSaveTokenAsync(
        AuthenticateRequest parameters)
