@@ -1,13 +1,24 @@
 ﻿namespace TgPics.WebApiWrapper;
 
+using HttpTracer;
 using RestSharp;
 using TgPics.Core.Models;
+using TgPics.WebApiWrapper.Helpers;
 
 public class TgPicsClient
 {
     public TgPicsClient(string host)
     {
-        restClient = new RestClient(host);
+        var options = new RestClientOptions(host)
+        {
+            ConfigureMessageHandler = handler =>
+                new HttpTracerHandler(
+                    handler,
+                    new FuckingWorkingDebugLogger(),
+                    HttpMessageParts.All)
+        };
+
+        restClient = new RestClient(options);
     }
 
     public TgPicsClient(
