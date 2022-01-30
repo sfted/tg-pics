@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TgPics.Core.Models;
+﻿namespace TgPics.WebApi.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Models;
 using TgPics.WebApi.Services;
-
-namespace TgPics.WebApi.Controllers;
 
 [ApiController]
 [Route("api/posts")]
@@ -19,37 +18,43 @@ public class PostsController : ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public IActionResult Add(AddPostRequest post)
+    public IActionResult Add(AddPostRequest request)
     {
-        service.Add(post);
+        service.Add(request);
         return Ok();
     }
 
     [Authorize]
     [HttpPost("remove")]
-    public IActionResult Remove(Post post)
+    public IActionResult Remove(RemovePostRequest request)
     {
-        service.Remove(post);
-        return Ok();
+        try
+        {
+            service.Remove(request);
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [Authorize]
     [HttpGet("getall")]
-    public IActionResult GetAll()
-    {
-        return Ok(service.GetAll());
-    }
+    public IActionResult GetAll() => Ok(service.GetAll());
 
     [Authorize]
     [HttpPost("removeall")]
-    public IActionResult RemoveAll(string confirmation)
+    public IActionResult RemoveAll(RemoveAllPostsRequest request)
     {
-        if (confirmation == "yeah, kill 'em all.")
+        try
         {
-            service.RemoveAll();
+            service.RemoveAll(request);
             return Ok();
         }
-        else return BadRequest(
-            "Confirm deletion by passing 'confirmation=yeah, kill 'em all.'");
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
