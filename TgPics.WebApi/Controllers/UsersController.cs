@@ -1,7 +1,6 @@
 ﻿namespace TgPics.WebApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Models;
 using TgPics.WebApi.Services;
 
@@ -16,7 +15,7 @@ public class UsersController : ControllerBase
         this.service = service;
     }
 
-    [HttpPost("login")]
+    [HttpPost("auth")]
     public IActionResult Authenticate(AuthenticateRequest model)
     {
         var response = service.Authenticate(model);
@@ -25,13 +24,5 @@ public class UsersController : ControllerBase
             return BadRequest(new { message = "Username or password is incorrect" });
 
         return Ok(response);
-    }
-
-    [Authorize]
-    [HttpGet("users")]
-    public IActionResult GetAll()
-    {
-        var users = service.GetAll();
-        return Ok(users);
     }
 }

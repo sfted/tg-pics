@@ -18,7 +18,8 @@ public interface IUserService
 
 public class UserService : IUserService
 {
-    // users hardcoded for simplicity, store in a db with hashed passwords in production applications
+    // users hardcoded for simplicity, store in a db
+    // with hashed passwords in production applications
     // дадададада
     public readonly static List<User> Users = new()
     {
@@ -34,39 +35,29 @@ public class UserService : IUserService
 
     public AuthenticateResponse Authenticate(AuthenticateRequest model)
     {
-        var user = Users.SingleOrDefault(x => x.Username == model.Username && x.Password == model.Password);
+        var user = Users.SingleOrDefault(
+            u => u.Username == model.Username && u.Password == model.Password);
 
-        // return null if user not found
         if (user == null) return null;
 
-        // authentication successful so generate jwt token
-        var token = GenerateJwtToken(user);
-
-        return new AuthenticateResponse(user, token);
+        return new AuthenticateResponse(user, GenerateJwtToken(user));
     }
 
-    public IEnumerable<User> GetAll()
-    {
-        return Users;
-    }
+    public IEnumerable<User> GetAll() => Users;
 
-    public User GetById(int id)
-    {
-        return Users.FirstOrDefault(x => x.Id == id);
-    }
-
-    // helper methods
+    public User GetById(int id) =>
+        Users.FirstOrDefault(x => x.Id == id);
 
     private string GenerateJwtToken(User user)
     {
-        // generate token that is valid for 7 days
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(settings.WebApiKey);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
             Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
