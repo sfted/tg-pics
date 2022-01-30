@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Desktop", "TgPics.De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Core", "TgPics.Core\TgPics.Core.csproj", "{BB1B59EF-875D-4E29-A9C4-847267670B7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgPics.WebApi", "TgPics.WebApi\TgPics.WebApi.csproj", "{A8D06D39-9448-4116-B80F-4C1C88383CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.WebApi", "TgPics.WebApi\TgPics.WebApi.csproj", "{A8D06D39-9448-4116-B80F-4C1C88383CDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgPics.WebApiWrapper", "TgPics.WebApiWrapper\TgPics.WebApiWrapper.csproj", "{31B4FDF0-3BBA-44A6-821F-725A82539C41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,22 @@ Global
 		{A8D06D39-9448-4116-B80F-4C1C88383CDE}.Release|x64.Build.0 = Release|Any CPU
 		{A8D06D39-9448-4116-B80F-4C1C88383CDE}.Release|x86.ActiveCfg = Release|Any CPU
 		{A8D06D39-9448-4116-B80F-4C1C88383CDE}.Release|x86.Build.0 = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|arm64.Build.0 = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|x64.Build.0 = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Debug|x86.Build.0 = Debug|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|arm64.ActiveCfg = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|arm64.Build.0 = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|x64.ActiveCfg = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|x64.Build.0 = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|x86.ActiveCfg = Release|Any CPU
+		{31B4FDF0-3BBA-44A6-821F-725A82539C41}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
