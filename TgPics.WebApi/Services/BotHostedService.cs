@@ -61,11 +61,11 @@ public class BotHostedService : IHostedService, IDisposable
     private async void CheckForNewPostsAndPostIfThereAreAny()
     {
         using var database = new DBService();
-        if (database.Posts.Any(p => p.Time < DateTime.Now))
+        if (database.Posts.Any(p => p.PublicationDateTime < DateTime.Now))
         {
             var post = database.Posts
                 .Include(p => p.Pictures)
-                .Where(p => p.Time < DateTime.Now)
+                .Where(p => p.PublicationDateTime < DateTime.Now)
                 .First();
 
             if (post != null && post.Pictures.Any())
@@ -96,7 +96,7 @@ public class BotHostedService : IHostedService, IDisposable
             {
                 var caption = $"src: [{post.SourceTitle}]({post.SourceLink})";
 
-                if (!string.IsNullOrEmpty(post.Text))
+                if (!string.IsNullOrEmpty(post.Comment))
                     caption.Insert(0, "text\n");
 
                 inputMediaPics.Add(

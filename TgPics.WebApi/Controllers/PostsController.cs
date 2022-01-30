@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TgPics.Core.Models;
 using TgPics.WebApi.Helpers;
+using TgPics.WebApi.Models;
 using TgPics.WebApi.Services;
 
 namespace TgPics.WebApi.Controllers;
@@ -18,7 +19,7 @@ public class PostsController : ControllerBase
 
     [Authorize]
     [HttpPost("add")]
-    public IActionResult Add(Post post)
+    public IActionResult Add(AddPostRequest post)
     {
         service.Add(post);
         return Ok();

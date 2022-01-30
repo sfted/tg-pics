@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace TgPics.WebApi.Services;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TgPics.Core.Models;
 using TgPics.WebApi.Helpers;
-
-namespace TgPics.WebApi.Services;
+using TgPics.WebApi.Models;
 
 public interface IPostsService
 {
-    public void Add(Post post);
+    public void Add(AddPostRequest post);
     public void Remove(Post post);
     public List<Post> GetAll();
     public void RemoveAll();
@@ -22,34 +23,50 @@ public class PostsService : IPostsService
 
     private readonly AppSettings settings;
 
-    public void Add(Post post)
+    public void Add(AddPostRequest post)
     {
         using var database = new DBService();
 
-        foreach (var pic in post.Pictures)
+        var postEntity = new Post
         {
-            if (pic.Data == null && pic.Source != null)
+            SourceLink = post.SourceLink,
+            SourceTitle = post.SourceTitle,
+            Comment = post.Comment,
+            Pictures = post.Pictures.Select(p => new Picture
+            {
+                Url = p.Url,
+                Position = p.Position
+            })
+        };
+
+        foreach (var pic in postEntity.Pictures)
+        {
+            if (pic.Data == null && pic.Url != null)
                 pic.Load();
         }
 
-        if(post.Time == null)
+        if (postEntity.PublicationDateTime == null)
         {
             if (database.Posts.Any())
             {
-                var lastPost = database.Posts.OrderBy(p => p.Time).Last();
-                var timing = lastPost.Time?.TimeOfDay;
+                var lastPost = database.Posts
+                    .OrderBy(p => p.PublicationDateTime).Last();
+
+                var timing = lastPost.PublicationDateTime?.TimeOfDay;
                 var nextTiming = settings.Timings.First(t => t > timing);
-                post.Time = lastPost.Time?.Date.Add(nextTiming);
+                
+                postEntity.PublicationDateTime = lastPost
+                    .PublicationDateTime?.Date.Add(nextTiming);
             }
             else
             {
                 var timing = DateTime.Now.TimeOfDay;
                 var nextTiming = settings.Timings.First(t => t > timing);
-                post.Time = DateTime.Now.Date.Add(nextTiming);
+                postEntity.PublicationDateTime = DateTime.Now.Date.Add(nextTiming);
             }
         }
 
-        database.Posts.Add(post);
+        database.Posts.Add(postEntity);
         database.SaveChanges();
     }
 
