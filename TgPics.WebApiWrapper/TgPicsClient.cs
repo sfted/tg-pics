@@ -7,7 +7,6 @@ public class TgPicsClient
 {
     public TgPicsClient(string host)
     {
-        this.host = host;
         restClient = new RestClient(host);
     }
 
@@ -17,49 +16,72 @@ public class TgPicsClient
         this.token = token;
     }
 
-    private readonly string host;
     private string token;
-    private RestClient restClient;
+    private readonly RestClient restClient;
+
 
     public async Task<AuthenticateResponse> AuthAsync(
-        AuthenticateRequest parameters)
-    {
-        var request = new RestRequest("api/auth")
-            .AddJsonBody(parameters);
+        AuthenticateRequest parameters) => await AuthAndSaveTokenAsync(parameters);
 
-        var response = await restClient
-            .PostAsync<AuthenticateResponse>(request);
+    public async Task AddPostAsync(AddPostRequest parameters) =>
+        await Post(parameters, "api/posts/add", token);
+
+    public async Task RemovePostAsync(RemovePostRequest parameters) =>
+        await Post(parameters, "api/posts/remove", token);
+
+    public async Task<GetAllPostsResponse> GetAllPostsAsync() =>
+        await Get<GetAllPostsResponse>("api/posts/getall", token);
+
+    public async Task RemoveAllPostsAsync(RemoveAllPostsRequest parameters) =>
+        await Post(parameters, "api/posts/removeall", token);
+    
+
+    private async Task<AuthenticateResponse> AuthAndSaveTokenAsync(
+       AuthenticateRequest parameters)
+    {
+        var response = await Post<AuthenticateRequest, AuthenticateResponse>(
+            parameters, "api/auth");
 
         token = response.Token;
         return response;
     }
 
-    public async Task AddPostAsync(AddPostRequest parameters) =>
-        await Post(parameters, "api/posts/add");
 
-    public async Task RemovePostAsync(RemovePostRequest parameters) =>
-        await Post(parameters, "api/posts/remove");
-
-    public async Task<GetAllPostsResponse> GetAllPostsAsync() =>
-        await Get<GetAllPostsResponse>("api/posts/getall");
-
-    public async Task RemoveAllPostsAsync(RemoveAllPostsRequest parameters) =>
-        await Post(parameters, "api/posts/removeall");
-
-
-    protected async Task Post<T>(T parameters, string route)
+    // TODO: убрать повторяющийся код (token)
+    protected async Task Post<T>(
+        T parameters, string route, string token = "")
         where T : class
     {
         var request = new RestRequest(route)
             .AddJsonBody(parameters);
 
+        if (token != "")
+            request.AddHeader("Authorization", $"Bearer {token}");
+
         await restClient.PostAsync(request);
     }
 
-    protected async Task<T> Get<T>(string route)
+    protected async Task<T2> Post<T1, T2>(
+        T1 parameters, string route, string token = "")
+        where T1 : class
+        where T2 : class
+    {
+        var request = new RestRequest(route)
+            .AddJsonBody(parameters);
+
+        if (token != "")
+            request.AddHeader("Authorization", $"Bearer {token}");
+
+        return await restClient.PostAsync<T2>(request);
+    }
+
+    protected async Task<T> Get<T>(string route, string token = "")
         where T : class
     {
         var request = new RestRequest(route);
+
+        if (token != "")
+            request.AddHeader("Authorization", $"Bearer {token}");
 
         return await restClient.GetAsync<T>(request);
     }
