@@ -2,7 +2,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TgPics.Core.Models;
+using TgPics.Core.Entities;
 
 namespace TgPics.WebApi.Services;
 

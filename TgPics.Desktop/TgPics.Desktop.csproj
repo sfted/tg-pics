@@ -20,9 +20,8 @@
     <None Remove="Assets\Icons\ig_icon.png" />
     <None Remove="Assets\Icons\tg_icon.png" />
     <None Remove="Utils\Converters\Converters.xaml" />
+    <None Remove="Views\Pages\LoginPage.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
-    <None Remove="Views\Pages\TelegramLoginPage.xaml" />
-    <None Remove="Views\Pages\TwoFACodePage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.194" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -58,11 +58,9 @@
     <Page Update="Utils\Converters\Converters.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\Pages\TwoFACodePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Pages\TelegramLoginPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Update="Views\Pages\LoginPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Pages\SettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -70,5 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TgPics.Core\TgPics.Core.csproj" />
+    <ProjectReference Include="..\TgPics.WebApiWrapper\TgPics.WebApiWrapper.csproj" />
   </ItemGroup>
 </Project>

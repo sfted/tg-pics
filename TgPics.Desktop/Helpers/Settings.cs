@@ -2,7 +2,6 @@
 
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Windows.Storage;
 
@@ -24,8 +23,6 @@ public sealed class Settings
                 (File.ReadAllText(filename));
         else
             values = new();
-
-        Debug.WriteLine(JsonConvert.SerializeObject(values));
     }
 
     public static Settings Instance

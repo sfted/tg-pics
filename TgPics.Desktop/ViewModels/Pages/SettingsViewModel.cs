@@ -1,130 +1,110 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿namespace TgPics.Desktop.ViewModels.Pages;
+
+using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Diagnostics;
+using TgPics.Core.Models;
+using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Views.Pages;
-using Windows.Storage;
+using TgPics.WebApiWrapper;
 
-namespace TgPics.Desktop.ViewModels.Pages
+public class SettingsViewModel : ViewModelBase
 {
-    public class SettingsViewModel : ViewModelBase
+    public SettingsViewModel()
     {
-        public SettingsViewModel()
+        SaveHostCommand = new(SaveHost);
+        LogInTgPicsCommand = new(LogInTgPics);
+        ProceedLoginCommand = new(ProceedLogin);
+
+        TgPicsHost = settings.Get<string>(TG_PICS_HOST);
+        TgPicsUsername = settings.Get<string>(TG_PICS_USERNAME);
+
+        if (!string.IsNullOrEmpty(settings.Get<string>(TG_PICS_TOKEN)))
+            TgPicsIsLoggedIn = true;
+    }
+
+    private const string TG_PICS_HOST = "tg_pics_host";
+    private const string TG_PICS_TOKEN = "tg_pics_token";
+    private const string TG_PICS_USERNAME = "tg_pics_username";
+
+    private readonly Settings settings = Settings.Instance;
+
+    private string tgPicsHost = string.Empty;
+    private string tgPicsUsername = string.Empty;
+    private bool tgPicsIsLoggedIn = false;
+
+    public string TgPicsHost
+    {
+        get => tgPicsHost;
+        set => SetProperty(ref tgPicsHost, value);
+    }
+
+    public bool TgPicsIsLoggedIn
+    {
+        get => tgPicsIsLoggedIn;
+        set => SetProperty(ref tgPicsIsLoggedIn, value);
+    }
+
+    public string TgPicsUsername
+    {
+        get => tgPicsUsername;
+        set => SetProperty(ref tgPicsUsername, value);
+    }
+
+    public RelayCommand SaveHostCommand { get; private set; }
+    public RelayCommand LogInTgPicsCommand { get; private set; }
+    public RelayCommand<LoginPage> ProceedLoginCommand { get; private set; }
+
+    private void SaveHost() =>
+        settings.Set(TG_PICS_HOST, TgPicsHost);
+
+    private async void LogInTgPics()
+    {
+        var page = new LoginPage();
+        var dialog = new ContentDialog()
         {
-            LogInTelegramCommand = new(LogInTelegram);
-            //TestTelegramCommand = new(Test);
-            //TestChatIdCommand = new(TestChatId);
+            XamlRoot = App.XamlRoot,
+            Title = "Вход в аккаунт",
+            Content = page,
+            PrimaryButtonText = "Войти",
+            PrimaryButtonCommand = ProceedLoginCommand,
+            DefaultButton = ContentDialogButton.Primary,
+            CloseButtonText = "Отмена",
+            PrimaryButtonCommandParameter = page
+        };
+
+        await dialog.ShowAsync();
+    }
+
+    private async void ProceedLogin(LoginPage page)
+    {
+        var client = new TgPicsClient(TgPicsHost);
+        var request = new AuthenticateRequest
+        {
+            Username = page.ViewModel.Username,
+            Password = page.ViewModel.Password
+        };
+
+        try
+        {
+            var response = await client.AuthAsync(request);
+            settings.Set(TG_PICS_TOKEN, response.Token);
+            settings.Set(TG_PICS_USERNAME, response.Username);
+            TgPicsIsLoggedIn = true;
+            NotifyPropertyChanged(TgPicsUsername);
         }
-
-        const string APP_ID = "app_id";
-        const string APP_HASH = "app_hash";
-
-        private readonly ApplicationDataContainer settings =
-            ApplicationData.Current.LocalSettings;
-
-        private bool telegramIsLoggedIn = true;
-        private bool telegramChannelIsSelected = true;
-
-        public bool TelegramIsLoggedIn
+        catch (Exception ex)
         {
-            get => telegramIsLoggedIn;
-            set => SetProperty(ref telegramIsLoggedIn, value);
-        }
-
-        public bool TelegramChannelIsSelected
-        {
-            get => telegramChannelIsSelected;
-            set => SetProperty(ref telegramChannelIsSelected, value);
-        }
-
-        public string AppId
-        {
-            get
-            {
-                if (settings.Values[APP_ID] != null)
-                    return settings.Values[APP_ID] as string;
-                else
-                    return string.Empty;
-            }
-
-            set
-            {
-                settings.Values[APP_ID] = value;
-            }
-        }
-
-        public string AppHash
-        {
-            get
-            {
-                if (settings.Values[APP_HASH] != null)
-                    return settings.Values[APP_HASH] as string;
-                else
-                    return string.Empty;
-            }
-
-            set
-            {
-                settings.Values[APP_HASH] = value;
-            }
-        }
-
-        public RelayCommand LogInTelegramCommand { get; private set; }
-        public RelayCommand LogOutOfTelegramCommand { get; private set; }
-        public RelayCommand SelectTelegramChannelCommand { get; private set; }
-        //public RelayCommand LogOutOfTelegramCommand { get; private set; }
-
-        private void LogInTelegram()
-        {
-            TelegramIsLoggedIn = !TelegramIsLoggedIn;
-        }
-
-        private async void Test()
-        {
-            var codePage = new TwoFACodePage();
-            var dialog = new ContentDialog
+            var dialog = new ContentDialog()
             {
                 XamlRoot = App.XamlRoot,
-                Title = "2FA",
-                Content = codePage,
-                CloseButtonText = "ОК",
-                CloseButtonCommand = new RelayCommand(() => Debug.WriteLine(codePage.Code))
+                Title = "Ошибка :(",
+                Content = ex.Message,
+                PrimaryButtonText = "OK",
+                DefaultButton = ContentDialogButton.Primary
             };
 
             await dialog.ShowAsync();
-        }
-
-        private async void TestTelegram()
-        {
-            try
-            {
-                //var bot = new TelegramBotClient(BotToken);
-                //var info = await bot.GetMeAsync();
-                //
-                //var dialog = new ContentDialog
-                //{
-                //    XamlRoot = App.XamlRoot,
-                //    Title = "Успешно!",
-                //    Content = $"Юзернейм бота: @{info.Username}",
-                //    CloseButtonText = "ОК",
-                //};
-                //
-                //await dialog.ShowAsync();
-                //await bot.CloseAsync();
-            }
-            catch (Exception ex)
-            {
-                var dialog = new ContentDialog
-                {
-                    XamlRoot = App.XamlRoot,
-                    Title = "Ошибка :(",
-                    FontSize = 12,
-                    Content = $"Сообщение об ошибке: {ex.Message}",
-                    CloseButtonText = "ОК",
-                };
-
-                await dialog.ShowAsync();
-            }
         }
     }
 }

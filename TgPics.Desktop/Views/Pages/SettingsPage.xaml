@@ -43,75 +43,83 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <ImageIcon
+                        <FontIcon
                             Grid.Row="0"
                             Grid.RowSpan="2"
                             Grid.Column="0"
                             Height="24"
                             VerticalAlignment="Center"
-                            Source="{StaticResource TgIcon}" />
+                            Glyph="&#xe875;" />
 
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="1"
                             FontSize="14"
-                            Text="Телеграм" />
+                            Text="Сервер" />
 
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="1"
                             FontSize="10"
                             Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                            Text="Вход в аккаунт, настройка канала для постинга"
+                            Text="Вход в аккаунт, адрес сервера"
                             TextWrapping="WrapWholeWords" />
                     </Grid>
                 </Expander.Header>
 
                 <StackPanel Spacing="8">
-                    <TextBlock
-                        FontSize="16"
-                        Text="Аккаунт" />
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            FontSize="12"
+                            Header="Адрес сервера:"
+                            Text="{x:Bind ViewModel.TgPicsHost,
+                                          Mode=TwoWay,
+                                          UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CommandBar
+                            Grid.Column="1"
+                            Margin="0,0,0,-8"
+                            VerticalAlignment="Bottom"
+                            DefaultLabelPosition="Right"
+                            OverflowButtonVisibility="Collapsed">
+                            <AppBarButton
+                                Command="{x:Bind ViewModel.SaveHostCommand}"
+                                Label="Сохранить">
+                                <AppBarButton.Icon>
+                                    <FontIcon Glyph="&#xe161;" />
+                                </AppBarButton.Icon>
+                            </AppBarButton>
+                        </CommandBar>
+                    </Grid>
 
                     <Grid>
-                        <Grid
-                            ColumnSpacing="16"
-                            Visibility="{x:Bind ViewModel.TelegramIsLoggedIn,
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Spacing="4"
+                            Visibility="{x:Bind ViewModel.TgPicsIsLoggedIn,
                                                 Converter={StaticResource BoolToVisibilityConverter},
                                                 Mode=OneWay}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Ellipse
-                                Grid.Column="0"
-                                Width="50"
-                                Height="50">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="https://avatars.mds.yandex.net/get-yapic/45848/4hNgxdKMTl5GD5XPK385vKHxt6U-1/islands-200" />
-                                </Ellipse.Fill>
-                            </Ellipse>
-
-                            <StackPanel
-                                Grid.Column="1"
+                            <TextBlock
                                 VerticalAlignment="Center"
-                                Spacing="2">
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Text="имя" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                    Text="+76666666666" />
-                            </StackPanel>
-                        </Grid>
+                                FontSize="12"
+                                Text="Вход выполнен, юзернейм:" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind ViewModel.TgPicsUsername}" />
+                        </StackPanel>
 
                         <StackPanel
                             Orientation="Horizontal"
-                            Visibility="{x:Bind ViewModel.TelegramIsLoggedIn,
+                            Visibility="{x:Bind ViewModel.TgPicsIsLoggedIn,
                                                 Converter={StaticResource BoolToVisibilityInverseConverter},
                                                 Mode=OneWay}">
                             <TextBlock
@@ -121,93 +129,10 @@
                             <HyperlinkButton
                                 Margin="0"
                                 Padding="4"
-                                Command="{x:Bind ViewModel.LogInTelegramCommand}"
+                                Command="{x:Bind ViewModel.LogInTgPicsCommand}"
                                 Content="войти в аккаунт."
                                 FontSize="12" />
                         </StackPanel>
-
-                        <CommandBar
-                            Grid.Column="2"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            DefaultLabelPosition="Right">
-                            <AppBarButton Label="Выйти">
-                                <AppBarButton.Icon>
-                                    <FontIcon Glyph="&#xe9ba;" />
-                                </AppBarButton.Icon>
-                            </AppBarButton>
-                        </CommandBar>
-                    </Grid>
-
-                    <TextBlock
-                        FontSize="16"
-                        Text="Канал" />
-
-                    <Grid>
-                        <Grid
-                            ColumnSpacing="16"
-                            Visibility="{x:Bind ViewModel.TelegramIsLoggedIn,
-                                                Converter={StaticResource BoolToVisibilityConverter},
-                                                Mode=OneWay}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Ellipse
-                                Grid.Column="0"
-                                Width="50"
-                                Height="50">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="https://avatars.yandex.net/get-music-user-playlist/69910/802630135.1042.87368/400x400?1642490822600" />
-                                </Ellipse.Fill>
-                            </Ellipse>
-
-                            <StackPanel
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Spacing="2">
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Text="название" />
-                                <TextBlock
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                    Text="666 подписчиков" />
-                            </StackPanel>
-                        </Grid>
-
-                        <StackPanel
-                            Orientation="Horizontal"
-                            Visibility="{x:Bind ViewModel.TelegramIsLoggedIn,
-                                                Converter={StaticResource BoolToVisibilityInverseConverter},
-                                                Mode=OneWay}">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Text="Канал не выбран," />
-                            <HyperlinkButton
-                                Margin="0"
-                                Padding="4"
-                                Command="{x:Bind ViewModel.LogInTelegramCommand}"
-                                Content="ввести юзернейм канала."
-                                FontSize="12" />
-                        </StackPanel>
-
-                        <CommandBar
-                            Grid.Column="2"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            DefaultLabelPosition="Right">
-                            <AppBarButton Label="Выбрать другой">
-                                <AppBarButton.Icon>
-                                    <FontIcon Glyph="&#xe627;" />
-                                </AppBarButton.Icon>
-                            </AppBarButton>
-                        </CommandBar>
                     </Grid>
                 </StackPanel>
             </Expander>
