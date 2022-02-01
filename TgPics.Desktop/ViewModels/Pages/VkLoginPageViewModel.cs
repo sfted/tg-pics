@@ -12,9 +12,9 @@ public class VkLoginPageViewModel : ViewModelBase
         AuthUrl = new Uri($"https://oauth.vk.com/authorize?client_id={VK_APP_ID}&display=popup&" +
                 $"redirect_uri=https://oauth.vk.com/blank.html&scope={SETTINGS}&response_type=token&v={API_VERSION}");
 
-    const string VK_APP_ID = "8068005";
-    const string SETTINGS = "photos";
-    const string API_VERSION = "5.131";
+    public const string VK_APP_ID = "8068005";
+    public const string SETTINGS = "photos";
+    public const string API_VERSION = "5.131";
 
     private Uri authUrl;
 

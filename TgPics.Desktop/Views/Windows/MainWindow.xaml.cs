@@ -33,6 +33,7 @@ public sealed partial class MainWindow : Window
         tag switch
         {
             "settings" => typeof(SettingsPage),
+            "vk_bookmarks" => typeof(VkBookmarksPage),
             _ => typeof(PageNotFound),
         };
 }

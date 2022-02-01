@@ -7,13 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-        Loaded="OnGridLoaded">
+    <Grid Loaded="OnGridLoaded">
         <NavigationView
             IsSettingsVisible="False"
             ItemInvoked="OnItemInvoked"
-            PaneDisplayMode="Top">
+            PaneDisplayMode="Left"
+            PaneTitle="Tg Pics">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="ВКонтакте">
                     <NavigationViewItem.Icon>
@@ -65,7 +64,9 @@
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem Tag="settings">
+                <NavigationViewItem
+                    Content="Настройки"
+                    Tag="settings">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe8b8;" />
                     </NavigationViewItem.Icon>
@@ -74,7 +75,7 @@
 
             <ScrollViewer HorizontalScrollMode="Disabled">
                 <Border
-                    Padding="16"
+                    Padding="32"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <Frame
                         x:Name="frame"
