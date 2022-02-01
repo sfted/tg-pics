@@ -3,7 +3,6 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TgPics.Core.Models;
 using TgPics.Desktop.Helpers;
@@ -202,7 +201,6 @@ public class SettingsViewModel : ViewModelBase
 
     private async void InitializeVkApi(string token)
     {
-        Debug.WriteLine("InitializeVkApi, " + token);
         try
         {
             vkApi = new VkApi();
