@@ -7,7 +7,7 @@
     <TextBlock
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        FontSize="24"
+        FontSize="48"
         FontWeight="Bold"
-        Text="Страница не найдена :(" />
+        Text="404." />
 </Page>

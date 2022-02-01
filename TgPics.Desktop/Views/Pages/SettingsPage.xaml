@@ -13,17 +13,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock
-            Grid.Row="0"
-            FontSize="28"
-            FontWeight="Bold"
-            Text="Настройки" />
-
         <StackPanel
-            Grid.Row="1"
+            Grid.Row="0"
             Spacing="8">
             <Expander
                 Padding="16"

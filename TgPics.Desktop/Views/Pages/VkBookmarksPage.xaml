@@ -13,28 +13,22 @@
         MaxWidth="650"
         RowSpacing="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock
+        <ItemsControl
             Grid.Row="0"
-            FontSize="28"
-            FontWeight="Bold"
-            Text="Закладки ВК" />
-
-        <ListView
-            Margin="-16,0,0,0"
-            Grid.Row="1"
-            ItemsSource="{x:Bind ViewModel.Items}"
-            SelectionMode="None">
-            <ListView.ItemTemplate>
+            Padding="0"
+            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+            ItemsSource="{x:Bind ViewModel.Items}">
+            <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border
-                        Margin="0,4"
+                        Margin="0,0,0,12"
                         Padding="16"
-                        Background="{ThemeResource ListBoxItemPointerOverBackgroundThemeBrush}"
+                        Background="{ThemeResource CardBackground}"
+                        BorderBrush="{ThemeResource CardBorder}"
                         BorderThickness="1"
                         CornerRadius="5">
                         <Grid>
@@ -69,10 +63,31 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <Button
+                            <CommandBar
                                 Grid.Row="0"
+                                Margin="0,0,-8,0"
                                 HorizontalAlignment="Right"
-                                Content="В канал" />
+                                DefaultLabelPosition="Collapsed"
+                                OverflowButtonVisibility="Collapsed">
+                                <AppBarButton
+                                    Width="55"
+                                    Label="В канал">
+                                    <AppBarButton.Icon>
+                                        <FontIcon
+                                            FontFamily="{StaticResource IconsFont}"
+                                            Glyph="&#xe163;" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+                                <AppBarButton
+                                    Width="55"
+                                    Label="Открыть">
+                                    <AppBarButton.Icon>
+                                        <FontIcon
+                                            FontFamily="{StaticResource IconsFont}"
+                                            Glyph="&#xe89d;" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+                            </CommandBar>
 
                             <FlipView
                                 Grid.Row="1"
@@ -103,17 +118,18 @@
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                     Text="&#xe7fd;" />
                                 <TextBlock
+                                    FontSize="12"
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                     Text="{Binding AuthorName}" />
                             </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
         <Button
-            Grid.Row="2"
+            Grid.Row="1"
             HorizontalAlignment="Center"
             Command="{x:Bind ViewModel.LoadMoreCommand}"
             Content="Загрузить еще" />
