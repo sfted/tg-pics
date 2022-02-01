@@ -12,6 +12,7 @@
         Loaded="OnGridLoaded">
         <NavigationView
             IsSettingsVisible="False"
+            ItemInvoked="OnItemInvoked"
             PaneDisplayMode="Top">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="ВКонтакте">
@@ -20,7 +21,9 @@
                     </NavigationViewItem.Icon>
 
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Закладки">
+                        <NavigationViewItem
+                            Content="Закладки"
+                            Tag="vk_bookmarks">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xe838;" />
                             </NavigationViewItem.Icon>
@@ -62,7 +65,7 @@
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem>
+                <NavigationViewItem Tag="settings">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe8b8;" />
                     </NavigationViewItem.Icon>

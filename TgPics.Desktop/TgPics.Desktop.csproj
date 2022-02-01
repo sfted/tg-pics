@@ -21,6 +21,7 @@
     <None Remove="Assets\Icons\tg_icon.png" />
     <None Remove="Utils\Converters\Converters.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
+    <None Remove="Views\Pages\PageNotFound.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
   </ItemGroup>
 
@@ -55,6 +56,9 @@
     <None Update="Assets\Fonts\material_icons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\PageNotFound.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Utils\Converters\Converters.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
