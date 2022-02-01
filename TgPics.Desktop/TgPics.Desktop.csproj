@@ -23,6 +23,7 @@
     <None Remove="Views\Pages\LoginPage.xaml" />
     <None Remove="Views\Pages\PageNotFound.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
+    <None Remove="Views\Pages\VkLoginPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +39,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.194" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="VkNet" Version="1.68.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -56,6 +58,9 @@
     <None Update="Assets\Fonts\material_icons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\VkLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Pages\PageNotFound.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

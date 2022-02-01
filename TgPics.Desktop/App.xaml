@@ -16,6 +16,8 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <x:Double x:Key="ContentDialogMaxWidth">750</x:Double>
+
             <FontFamily x:Key="IconsFont">pack://application:,,,/Assets/Fonts/material_icons.ttf#Material Icons Round</FontFamily>
 
             <ImageSource x:Key="VkIcon">ms-appx:///Assets/Icons/vk_icon.png</ImageSource>
