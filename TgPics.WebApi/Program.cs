@@ -1,5 +1,7 @@
 // https://github.com/cornflourblue/dotnet-6-jwt-authentication-api
 
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Services;
@@ -23,6 +25,12 @@ services.AddHostedService<BotHostedService>(s =>
         builder.Configuration["TgAdminChatId"],
         builder.Configuration["TgChannelUsername"]));
 
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+//services.AddDbContextPool<DBService>(
+//      options => options.UseMySql(connection, ServerVersion.AutoDetect(connection))
+//   );
+DBService.ConnectionString = connection;
+
 var app = builder.Build();
 
 var settings = app.Services
@@ -30,7 +38,7 @@ var settings = app.Services
     .Value;
 
 settings.WebApiKey = builder.Configuration["WebApiKey"];
-settings.PostPerDay = 
+settings.PostPerDay =
     Convert.ToInt32(builder.Configuration["PostsPerDay"]);
 
 UserService.Users[0].Password =
@@ -41,9 +49,17 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader());
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 app.UseStaticFiles();
+
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 
 app.Run();
