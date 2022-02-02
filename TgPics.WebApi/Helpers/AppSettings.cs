@@ -23,6 +23,10 @@ public class AppSettings
             throw new ArgumentException(
                 "The interval must be greater than zero.", nameof(interval));
 
+        if (interval > 24)
+            throw new ArgumentException(
+                "The interval must be less than 24.", nameof(interval));
+
         var timings = new List<TimeSpan>();
         var offset = TimeSpan.FromHours(24 / interval);
         var current = TimeSpan.Zero;

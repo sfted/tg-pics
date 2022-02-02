@@ -38,7 +38,7 @@ public class PostsService : IPostsService
             {
                 Url = p.Url,
                 Position = p.Position
-            })
+            }).ToList()
         };
 
         foreach (var pic in post.Pictures)
