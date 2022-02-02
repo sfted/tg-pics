@@ -97,7 +97,7 @@ public class BotHostedService : IHostedService, IDisposable
                 var caption = $"src: [{post.SourceTitle}]({post.SourceLink})";
 
                 if (!string.IsNullOrEmpty(post.Comment))
-                    caption.Insert(0, "text\n");
+                    caption = caption.Insert(0, "text\n");
 
                 inputMediaPics.Add(
                     new InputMediaPhoto(media)
