@@ -5,7 +5,7 @@ using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.ViewModels.Pages;
 
 public sealed partial class VkBookmarksPage
-    : Page, IViewModel<VkBookmarksPageViewModel>
+    : Page, IViewModel<VkBookmarksViewModel>
 {
     public VkBookmarksPage()
     {
@@ -13,5 +13,5 @@ public sealed partial class VkBookmarksPage
         ViewModel = new();
     }
 
-    public VkBookmarksPageViewModel ViewModel { get; set; }
+    public VkBookmarksViewModel ViewModel { get; set; }
 }

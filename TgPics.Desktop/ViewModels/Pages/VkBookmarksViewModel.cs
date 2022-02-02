@@ -13,9 +13,9 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Utils;
 
-public class VkBookmarksPageViewModel : ViewModelBase
+public class VkBookmarksViewModel : ViewModelBase
 {
-    public VkBookmarksPageViewModel()
+    public VkBookmarksViewModel()
     {
         LoadMoreCommand = new(LoadMore);
         InitVkApi();
@@ -88,6 +88,7 @@ public class VkBookmarksPageViewModel : ViewModelBase
 
             foreach (var item in response.Response.Items)
                 Items.Add(new FaveGetObjectViewModel(
+                    api,
                     item,
                     response.Response.Profiles,
                     response.Response.Groups));

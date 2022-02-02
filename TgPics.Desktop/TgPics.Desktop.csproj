@@ -22,6 +22,7 @@
     <None Remove="Utils\Converters\Converters.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
     <None Remove="Views\Pages\PageNotFound.xaml" />
+    <None Remove="Views\Pages\PrepareToPostPage.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
     <None Remove="Views\Pages\VkBookmarksPage.xaml" />
     <None Remove="Views\Pages\VkLoginPage.xaml" />
@@ -59,6 +60,9 @@
     <None Update="Assets\Fonts\material_icons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\PrepareToPostPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Pages\VkBookmarksPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

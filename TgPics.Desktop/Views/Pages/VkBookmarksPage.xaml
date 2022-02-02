@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:TgPics.Desktop.ViewModels.Pages"
-    d:DataContext="{d:DesignInstance Type=pages:VkBookmarksPageViewModel}"
+    d:DataContext="{d:DesignInstance Type=pages:VkBookmarksViewModel}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
@@ -71,6 +71,7 @@
                                 OverflowButtonVisibility="Collapsed">
                                 <AppBarButton
                                     Width="55"
+                                    Command="{Binding PrepareToPublishCommand}"
                                     Label="В канал">
                                     <AppBarButton.Icon>
                                         <FontIcon
@@ -112,6 +113,7 @@
                                 Orientation="Horizontal"
                                 Spacing="4"
                                 Visibility="{Binding IsSigned, Converter={StaticResource BoolToVisibilityConverter}}">
+
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     FontFamily="{StaticResource IconsFont}"

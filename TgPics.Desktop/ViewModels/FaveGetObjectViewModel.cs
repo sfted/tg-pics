@@ -3,19 +3,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TgPics.Core.Models;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.MVVM.Interfaces;
+using TgPics.Desktop.Utils.Extensions;
+using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
-using static TgPics.Desktop.ViewModels.Pages.VkBookmarksPageViewModel;
+using static TgPics.Desktop.ViewModels.Pages.VkBookmarksViewModel;
 
 public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBetter>
 {
     public FaveGetObjectViewModel(
+        VkApi api,
         FaveGetObjectButBetter model,
         List<User> profiles,
         List<Group> groups)
     {
+        this.api = api;
         Model = model;
 
         if (model.Post != null)
@@ -50,8 +55,11 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
             Url = new Uri($"https://vk.com/wall{model.Post.OwnerId}_{model.Post.Id}");
 
             OpenInBrowserCommand = new(OpenInBrowser);
+            PrepareToPublishCommand = new(PrepareToPublish);
         }
     }
+
+    private readonly VkApi api;
 
     public FaveGetObjectButBetter Model { get; set; }
     public string GroupName { get; set; }
@@ -63,7 +71,22 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
     public Uri Url { get; set; }
 
     public RelayCommand OpenInBrowserCommand { get; private set; }
+    public RelayCommand PrepareToPublishCommand { get; private set; }
 
     private void OpenInBrowser() =>
         Windows.System.Launcher.LaunchUriAsync(Url);
+
+    private void PrepareToPublish() =>
+        Desktop.App.NavgateTo(
+            "prepare_to_publish",
+            new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
+            {
+                SourceLink = Url,
+                SourceTitle = $"vk // {GroupName}",
+                Photos = Photos.Select(p => new Core.Models.PrepareToPublishPhoto
+                {
+                    OriginalUrl = p.OriginalUri,
+                    Preview32Url = p.Model.GetSmallest32AspectRatioImageUri()
+                }).ToList()
+            }));
 }
