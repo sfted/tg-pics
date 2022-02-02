@@ -22,7 +22,7 @@ public class VkBookmarksPageViewModel : ViewModelBase
         LoadBookmarks();
     }
 
-    VkApi vkApi;
+    VkApi api;
     int offset = 0;
 
     public ObservableCollection<FaveGetObjectViewModel> Items { get; private set; } = new();
@@ -33,8 +33,8 @@ public class VkBookmarksPageViewModel : ViewModelBase
     {
         try
         {
-            vkApi = new VkApi();
-            vkApi.Authorize(new ApiAuthParams
+            api = new VkApi();
+            api.Authorize(new ApiAuthParams
             {
                 AccessToken = Settings.Instance.Get<string>(
                     SettingsViewModel.VK_TOKEN),
@@ -68,7 +68,7 @@ public class VkBookmarksPageViewModel : ViewModelBase
                 { "extended", 1 },
                 { "offset", offset },
                 { "item_type", "post" },
-                { "access_token", vkApi.Token },
+                { "access_token", api.Token },
                 { "v", VkLoginPageViewModel.API_VERSION }
             };
 
@@ -83,7 +83,7 @@ public class VkBookmarksPageViewModel : ViewModelBase
                 },
             };
 
-            var json = await vkApi.InvokeAsync("fave.get", parameters);
+            var json = await api.InvokeAsync("fave.get", parameters);
             var response = JsonConvert.DeserializeAnonymousType(json, scheme);
 
             foreach (var item in response.Response.Items)

@@ -39,53 +39,31 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
 
             if (author != null)
                 AuthorName = $"{author.FirstName} {author.LastName}";
-            else 
+            else
                 IsSigned = false;
 
             Photos = Model.Post.Attachments
                 .Where(a => a.Type == typeof(Photo))
                 .Select(p => new PhotoViewModel(p.Instance as Photo))
                 .ToList();
+
+            Url = new Uri($"https://vk.com/wall{model.Post.OwnerId}_{model.Post.Id}");
+
+            OpenInBrowserCommand = new(OpenInBrowser);
         }
     }
 
-    string groupName;
-    DateTime date;
-    Uri groupProfilePic;
-    List<PhotoViewModel> photos;
-    string authorName;
-
     public FaveGetObjectButBetter Model { get; set; }
-
-    public string GroupName
-    {
-        get => groupName;
-        set => SetProperty(ref groupName, value);
-    }
-
-    public DateTime Date
-    {
-        get => date;
-        set => SetProperty(ref date, value);
-    }
-
-    public Uri GroupProfilePic
-    {
-        get => groupProfilePic;
-        set => SetProperty(ref groupProfilePic, value);
-    }
-
-    public List<PhotoViewModel> Photos
-    {
-        get => photos;
-        set => SetProperty(ref photos, value);
-    }
-
-    public string AuthorName
-    {
-        get => authorName;
-        set => SetProperty(ref authorName, value);
-    }
-
+    public string GroupName { get; set; }
+    public DateTime Date { get; set; }
+    public Uri GroupProfilePic { get; set; }
+    public string AuthorName { get; set; }
     public bool IsSigned { get; private set; } = true;
+    public List<PhotoViewModel> Photos { get; set; }
+    public Uri Url { get; set; }
+
+    public RelayCommand OpenInBrowserCommand { get; private set; }
+
+    private void OpenInBrowser() =>
+        Windows.System.Launcher.LaunchUriAsync(Url);
 }

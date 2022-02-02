@@ -80,6 +80,7 @@
                                 </AppBarButton>
                                 <AppBarButton
                                     Width="55"
+                                    Command="{Binding OpenInBrowserCommand}"
                                     Label="Открыть">
                                     <AppBarButton.Icon>
                                         <FontIcon
