@@ -3,14 +3,14 @@ using TgPics.Core.Entities;
 
 namespace TgPics.WebApi.Services;
 
-public class DBService : DbContext
+public class DatabaseService : DbContext
 {
     public static string ConnectionString { get; set; }
 
     public DbSet<Post> Posts { get; set; }
     public DbSet<MediaFile> Uploads { get; set; }
 
-    public DBService()
+    public DatabaseService()
     {
         //Database.EnsureDeleted();
         Database.EnsureCreated();

@@ -30,7 +30,7 @@
 
             <TextBlock
                 x:Name="currentPageTitleTextBlock"
-                Margin="220,2,0,0"
+                Margin="250,2,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="12"
@@ -53,7 +53,7 @@
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="OnItemInvoked"
-            OpenPaneLength="220"
+            OpenPaneLength="250"
             PaneDisplayMode="Left">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="ВКонтакте">

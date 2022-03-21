@@ -1,6 +1,7 @@
 ﻿namespace TgPics.WebApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
+using TgPics.Core.Models.Requests;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Services;
 
@@ -8,34 +9,26 @@ using TgPics.WebApi.Services;
 [Route("api/files")]
 public class FilesController : ControllerBase
 {
-    public FilesController(
-        IFilesService service,
-        IWebHostEnvironment environment)
+    public FilesController(IFileService service)
     {
         this.service = service;
-        this.environment = environment;
     }
 
-    readonly IFilesService service;
-    readonly IWebHostEnvironment environment;
+    readonly IFileService service;
 
     [HttpGet("get")]
     public IActionResult Get(int id)
     {
         try
         {
-            var filename = service.Get(id);
-            var extension = Path.GetExtension(filename);
-
-            var file = environment
-                .ContentRootFileProvider
-                .GetFileInfo(filename)
-                .CreateReadStream();
+            var info = service.Get(id);
+            var extension = Path.GetExtension(info.Name);
+            var file = info.CreateReadStream();
 
             return extension switch
             {
-                FilesService.JPG or FilesService.JPEG => File(file, "image/jpeg"),
-                FilesService.MP4 => File(file, "video/mp4", enableRangeProcessing: true),
+                FileService.JPG or FileService.JPEG => File(file, "image/jpeg"),
+                FileService.MP4 => File(file, "video/mp4", enableRangeProcessing: true),
                 _ => throw new NotSupportedException(
                     $"This file type ('{extension}') is not supported.")
             };
@@ -52,10 +45,8 @@ public class FilesController : ControllerBase
     {
         try
         {
-            var response = service.GetAll(
-                Request.GetFullHost(), count, offset);
-
-            return Ok(response);
+            return Ok(service.GetAll(
+                Request.GetFullHost(), count, offset));
         }
         catch (Exception ex)
         {
@@ -71,11 +62,25 @@ public class FilesController : ControllerBase
         try
         {
             var infos = await service.UploadAsync(
-                Request.GetFullHost(),
-                environment.ContentRootPath,
-                files);
+                Request.GetFullHost(), files);
 
             return Ok(infos);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPost("remove")]
+    public IActionResult Remove(IdRequest request)
+    {
+        try
+        {
+            service.Remove(request);
+
+            return Ok();
         }
         catch (Exception ex)
         {

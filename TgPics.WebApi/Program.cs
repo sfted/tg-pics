@@ -1,5 +1,6 @@
 // https://github.com/cornflourblue/dotnet-6-jwt-authentication-api
 
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,20 +17,32 @@ services.AddControllers();
 services.Configure<AppSettings>(
     builder.Configuration.GetSection("AppSettings"));
 
-services.AddScoped<IUserService, UserService>();
-services.AddScoped<IPostsService, PostsService>();
+{
+    services.AddSingleton<IUserService, UserService>();
+    services.AddSingleton<IPostService, PostService>();
+    services.AddSingleton<IFileService, FileService>();
 
-services.AddHostedService<BotHostedService>(s =>
-    new BotHostedService(
-        builder.Configuration["BotToken"],
-        builder.Configuration["TgAdminChatId"],
-        builder.Configuration["TgChannelUsername"]));
+    services.AddHostedService<BotService>(provider =>
+        new BotService(
+            builder.Configuration["BotToken"],
+            builder.Configuration["TgAdminChatId"],
+            builder.Configuration["TgChannelUsername"],
+            provider.GetRequiredService<IPostService>(),
+            provider.GetRequiredService<IFileService>()));
+}
+
+//https://stackoverflow.com/questions/40364226
+services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue;
+});
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 //services.AddDbContextPool<DBService>(
 //      options => options.UseMySql(connection, ServerVersion.AutoDetect(connection))
 //   );
-DBService.ConnectionString = connection;
+DatabaseService.ConnectionString = connection;
 
 var app = builder.Build();
 
@@ -51,7 +64,8 @@ app.UseCors(x => x
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto
 });
 
 app.UseMiddleware<JwtMiddleware>();

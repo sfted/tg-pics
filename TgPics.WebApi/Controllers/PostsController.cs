@@ -1,32 +1,70 @@
-﻿namespace TgPics.WebApi.Controllers;
-
-using Microsoft.AspNetCore.Mvc;
-using TgPics.Core.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using TgPics.Core.Models.Requests;
+using TgPics.Core.Models.Responses;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Services;
+
+namespace TgPics.WebApi.Controllers;
 
 [ApiController]
 [Route("api/posts")]
 public class PostsController : ControllerBase
 {
-    public PostsController(IPostsService service)
+    public PostsController(IPostService service)
     {
         this.service = service;
     }
 
-    private readonly IPostsService service;
+    private readonly IPostService service;
+
+    [Authorize]
+    [HttpGet("get")]
+    public IActionResult Get(int id)
+    {
+        try
+        {
+            return Ok(service.Get(
+                Request.GetFullHost(), id));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new MessageResponse(ex.Message));
+        }
+    }
+
+    [Authorize]
+    [HttpGet("getall")]
+    public IActionResult GetAll(int count = 10, int offset = 0)
+    {
+        try
+        {
+            return Ok(service.GetAll(
+                Request.GetFullHost(), count, offset));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new MessageResponse(ex.Message));
+        }
+    }
 
     [Authorize]
     [HttpPost("add")]
-    public IActionResult Add(AddPostRequest request)
+    public IActionResult Add(PostsAddRequest request)
     {
-        service.Add(request);
-        return Ok();
+        try
+        {
+            return Ok(service.Add(
+                Request.GetFullHost(), request));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new MessageResponse(ex.Message));
+        }
     }
 
     [Authorize]
     [HttpPost("remove")]
-    public IActionResult Remove(RemovePostRequest request)
+    public IActionResult Remove(IdRequest request)
     {
         try
         {
@@ -35,26 +73,38 @@ public class PostsController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new MessageResponse(ex.Message));
         }
     }
 
     [Authorize]
-    [HttpGet("getall")]
-    public IActionResult GetAll() => Ok(service.GetAll());
-
-    [Authorize]
-    [HttpPost("removeall")]
-    public IActionResult RemoveAll(RemoveAllPostsRequest request)
+    [HttpPost("postnow")]
+    public IActionResult PostNow(IdRequest request)
     {
         try
         {
-            service.RemoveAll(request);
+            service.PostNow(request);
             return Ok();
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new MessageResponse(ex.Message));
+        }
+    }
+
+    [Authorize]
+    [HttpPost("removeall")]
+    public async Task<IActionResult> RemoveAllAsync(PostsRemoveAllRequest request)
+    {
+        try
+        {
+            var count = await service.RemoveAllAsync(request);
+
+            return Ok(count);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new MessageResponse(ex.Message));
         }
     }
 }

@@ -40,8 +40,8 @@ public class TgPicsClient
     public async Task RemovePostAsync(RemovePostRequest parameters) =>
         await Post(parameters, "api/posts/remove", token);
 
-    public async Task<GetAllPostsResponse> GetAllPostsAsync() =>
-        await Get<GetAllPostsResponse>("api/posts/getall", token);
+    public async Task<PostsGetAllResponse> GetAllPostsAsync() =>
+        await Get<PostsGetAllResponse>("api/posts/getall", token);
 
     public async Task RemoveAllPostsAsync(RemoveAllPostsRequest parameters) =>
         await Post(parameters, "api/posts/removeall", token);

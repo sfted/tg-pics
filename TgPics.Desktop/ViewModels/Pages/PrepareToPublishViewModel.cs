@@ -47,7 +47,7 @@ public class PrepareToPublishViewModel : ViewModelBase
                 SourceLink = Post.Model.SourceLink.ToString(),
                 SourceTitle = Post.Model.SourceTitle,
                 Comment = Comment,
-                Pictures = SelectedPhotos.Select(p => new PictureInfo
+                MediaIds = SelectedPhotos.Select(p => new PictureInfo
                 {
                     Url = p.Model.OriginalUrl.ToString()
                 })

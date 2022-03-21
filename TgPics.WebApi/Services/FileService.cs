@@ -1,32 +1,46 @@
 ﻿namespace TgPics.WebApi.Services;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using TgPics.Core.Entities;
 using TgPics.Core.Enums;
 using TgPics.Core.Models;
+using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
 
-public interface IFilesService
+public interface IFileService
 {
-    public string Get(int id);
+    public IFileInfo Get(int id);
 
     public FilesGetAllResponse GetAll(
         string host, int count, int offset);
 
     public Task<List<MediaFileInfo>> UploadAsync(
-        string host, string root, IFormFile[] files);
+        string host, IFormFile[] files);
+
+    public Task<int> UploadAsync(IFormFile file);
+
+    public void Remove(IdRequest request);
+    public void Remove(DatabaseService database, IdRequest request);
 }
 
-public class FilesService : IFilesService
+public class FileService : IFileService
 {
+    public FileService(IWebHostEnvironment environment)
+    {
+        this.environment = environment;
+    }
+
+    private readonly IWebHostEnvironment environment;
+
     public const string JPG = ".jpg";
     public const string JPEG = ".jpeg";
     public const string MP4 = ".mp4";
     public const string UPLOADS = "uploads";
 
-    public string Get(int id)
+    public IFileInfo Get(int id)
     {
-        using var database = new DBService();
+        using var database = new DatabaseService();
 
         var file = database
             .Uploads
@@ -39,7 +53,11 @@ public class FilesService : IFilesService
         if (file.FileName == null)
             throw new Exception($"File with id = '{id}' has null filename.");
 
-        return $"{UPLOADS}/{file.FileName}";
+        var info = environment
+            .ContentRootFileProvider
+            .GetFileInfo($"{UPLOADS}/{file.FileName}");
+
+        return info;
     }
 
     public FilesGetAllResponse GetAll(string host, int count, int offset)
@@ -52,7 +70,7 @@ public class FilesService : IFilesService
             throw new ArgumentOutOfRangeException(
                 nameof(offset), offset, "Value must be at least zero.");
 
-        using var database = new DBService();
+        using var database = new DatabaseService();
 
         var files = database
             .Uploads
@@ -66,7 +84,7 @@ public class FilesService : IFilesService
     }
 
     public async Task<List<MediaFileInfo>> UploadAsync(
-        string host, string root, IFormFile[] files)
+        string host, IFormFile[] files)
     {
         foreach (var file in files)
         {
@@ -83,15 +101,53 @@ public class FilesService : IFilesService
             if (file.Length <= 0)
                 continue;
 
-            var info = await SaveFileAndGetInfo(host, root, file);
+            var info = await SaveFileAndGetInfo(
+                host, environment.ContentRootPath, file);
+
             infos.Add(info);
         }
 
         return infos;
     }
 
+    public async Task<int> UploadAsync(IFormFile file)
+    {
+        var extension = Path.GetExtension(file.FileName);
+
+        if (extension != JPG && extension != JPEG && extension != MP4)
+            throw new NotSupportedException($"This file format ({extension}) is not supported.");
+
+        // небольшой костыль — host: string.Empty
+        var info = await SaveFileAndGetInfo(
+            null, environment.ContentRootPath, file);
+
+        return info.Id;
+    }
+
+    public void Remove(IdRequest request)
+    {
+        using var database = new DatabaseService();
+        Remove(database, request);
+        database.SaveChanges();
+    }
+
+    public void Remove(DatabaseService database, IdRequest request)
+    {
+        var file = database
+            .Uploads
+            .First(f => f.Id == request.Id);
+
+        var info = environment
+            .ContentRootFileProvider
+            .GetFileInfo($"{UPLOADS}/{file.FileName}");
+
+        File.Delete(info.PhysicalPath);
+
+        database.Remove(file);
+    }
+
     static async Task<MediaFileInfo> SaveFileAndGetInfo(
-        string host, string root, IFormFile file)
+        string? host, string root, IFormFile file)
     {
         string uploads = Path.Combine(root, UPLOADS);
 
@@ -100,7 +156,7 @@ public class FilesService : IFilesService
 
         var media = new MediaFile();
 
-        using var database = new DBService();
+        using var database = new DatabaseService();
         database.Uploads.Add(media);
 
         // так надо. (чтобы получить id)

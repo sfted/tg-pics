@@ -47,10 +47,17 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
             else
                 IsSigned = false;
 
+            if (!string.IsNullOrEmpty(Model.Post.Text))
+                Text = Model.Post.Text;
+            else
+                HasText = false;
+
             Photos = Model.Post.Attachments
                 .Where(a => a.Type == typeof(Photo))
                 .Select(p => new PhotoViewModel(p.Instance as Photo))
                 .ToList();
+
+            Tags = Model.Tags.ToList();
 
             Url = new Uri($"https://vk.com/wall{model.Post.OwnerId}_{model.Post.Id}");
 
@@ -65,9 +72,12 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
     public string GroupName { get; set; }
     public DateTime Date { get; set; }
     public Uri GroupProfilePic { get; set; }
+    public string Text { get; set; }
     public string AuthorName { get; set; }
-    public bool IsSigned { get; private set; } = true;
+    public bool IsSigned { get; set; } = true;
+    public bool HasText { get; set; } = true;
     public List<PhotoViewModel> Photos { get; set; }
+    public List<FaveTag> Tags { get; set; }
     public Uri Url { get; set; }
 
     public RelayCommand OpenInBrowserCommand { get; private set; }

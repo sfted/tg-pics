@@ -2,21 +2,22 @@
 
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using WebApi.Services;
 
 public class JwtMiddleware
 {
-    private readonly RequestDelegate next;
-    private readonly AppSettings settings;
-
     public JwtMiddleware(RequestDelegate next, IOptions<AppSettings> settings)
     {
         this.next = next;
         this.settings = settings.Value;
     }
+
+    public const string USER_KEY = "User";
+
+    readonly RequestDelegate next;
+    readonly AppSettings settings;
 
     public async Task Invoke(HttpContext context, IUserService service)
     {
@@ -29,7 +30,7 @@ public class JwtMiddleware
         await next(context);
     }
 
-    private void AttachUserToContext(HttpContext context, IUserService userService, string token)
+    void AttachUserToContext(HttpContext context,IUserService userService, string token)
     {
         try
         {
@@ -41,7 +42,8 @@ public class JwtMiddleware
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                // set clockskew to zero so tokens expire exactly at token expiration time
+                // (instead of 5 minutes later)
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
 
@@ -49,7 +51,7 @@ public class JwtMiddleware
             var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
             // attach user to context on successful jwt validation
-            context.Items["User"] = userService.GetById(userId);
+            context.Items[USER_KEY] = userService.GetById(userId);
         }
         catch
         {

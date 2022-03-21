@@ -2,8 +2,10 @@
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
+using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.ViewModels.Pages;
 
@@ -23,11 +25,18 @@ public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
         CoreWebView2NavigationStartingEventArgs args) =>
         ViewModel.ProceedLogin(args.Uri.ToString());
 
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+    }
+
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
         var webView2 = sender as WebView2;
         await webView2.EnsureCoreWebView2Async();
-        webView2.CoreWebView2.CookieManager.DeleteAllCookies();
+
+        if (string.IsNullOrEmpty(Settings.Instance.Get<string>(SettingsViewModel.VK_TOKEN)))
+            webView2.CoreWebView2.CookieManager.DeleteAllCookies();
 
         ViewModel = new();
         ViewModelLoaded?.Invoke();
