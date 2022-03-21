@@ -1,23 +1,24 @@
-﻿namespace TgPics.WebApi.Helpers;
-
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using WebApi.Services;
+using TgPics.WebApi.Services;
+
+namespace TgPics.WebApi.Helpers;
 
 public class JwtMiddleware
 {
-    public JwtMiddleware(RequestDelegate next, IOptions<AppSettings> settings)
+    public JwtMiddleware(
+        RequestDelegate next,
+        ISettingsService settingsService)
     {
         this.next = next;
-        this.settings = settings.Value;
+        this.settingsService = settingsService;
     }
 
     public const string USER_KEY = "User";
 
     readonly RequestDelegate next;
-    readonly AppSettings settings;
+    readonly ISettingsService settingsService;
 
     public async Task Invoke(HttpContext context, IUserService service)
     {
@@ -30,12 +31,13 @@ public class JwtMiddleware
         await next(context);
     }
 
-    void AttachUserToContext(HttpContext context,IUserService userService, string token)
+    void AttachUserToContext(
+        HttpContext context, IUserService userService, string token)
     {
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(settings.WebApiKey);
+            var key = Encoding.ASCII.GetBytes(settingsService.WebApiKey);
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

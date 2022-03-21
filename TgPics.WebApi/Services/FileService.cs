@@ -26,12 +26,16 @@ public interface IFileService
 
 public class FileService : IFileService
 {
-    public FileService(IWebHostEnvironment environment)
+    public FileService(
+        IWebHostEnvironment environment,
+        DatabaseService database)
     {
         this.environment = environment;
+        this.database = database;
     }
 
     private readonly IWebHostEnvironment environment;
+    private readonly DatabaseService database;
 
     public const string JPG = ".jpg";
     public const string JPEG = ".jpeg";
@@ -40,8 +44,6 @@ public class FileService : IFileService
 
     public IFileInfo Get(int id)
     {
-        using var database = new DatabaseService();
-
         var file = database
             .Uploads
             .AsNoTracking()
@@ -69,8 +71,6 @@ public class FileService : IFileService
         if (offset < 0)
             throw new ArgumentOutOfRangeException(
                 nameof(offset), offset, "Value must be at least zero.");
-
-        using var database = new DatabaseService();
 
         var files = database
             .Uploads
@@ -126,7 +126,6 @@ public class FileService : IFileService
 
     public void Remove(IdRequest request)
     {
-        using var database = new DatabaseService();
         Remove(database, request);
         database.SaveChanges();
     }
@@ -146,7 +145,7 @@ public class FileService : IFileService
         database.Remove(file);
     }
 
-    static async Task<MediaFileInfo> SaveFileAndGetInfo(
+    async Task<MediaFileInfo> SaveFileAndGetInfo(
         string? host, string root, IFormFile file)
     {
         string uploads = Path.Combine(root, UPLOADS);
@@ -156,7 +155,6 @@ public class FileService : IFileService
 
         var media = new MediaFile();
 
-        using var database = new DatabaseService();
         database.Uploads.Add(media);
 
         // так надо. (чтобы получить id)

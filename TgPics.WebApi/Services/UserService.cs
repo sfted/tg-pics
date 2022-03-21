@@ -1,13 +1,11 @@
-﻿namespace TgPics.WebApi.Services;
-
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TgPics.Core.Entities;
 using TgPics.Core.Models;
-using TgPics.WebApi.Helpers;
+
+namespace TgPics.WebApi.Services;
 
 public interface IUserService
 {
@@ -18,19 +16,21 @@ public interface IUserService
 
 public class UserService : IUserService
 {
-    // users hardcoded for simplicity, store in a db
-    // with hashed passwords in production applications
+    // >users hardcoded for simplicity, store in a db
+    // >with hashed passwords in production applications
     // дадададада
-    public readonly static List<User> Users = new()
+    public readonly List<User> Users = new()
     {
         new User { Id = 1, Username = "admin" }
     };
 
-    private readonly AppSettings settings;
+    private readonly ISettingsService settings;
 
-    public UserService(IOptions<AppSettings> settings)
+    public UserService(ISettingsService settings)
     {
-        this.settings = settings.Value;
+        this.settings = settings;
+
+        Users[0].Password = settings.AdminPwd;
     }
 
     public AuthenticateResponse Authenticate(AuthenticateRequest model)

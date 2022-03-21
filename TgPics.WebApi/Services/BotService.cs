@@ -12,30 +12,31 @@ namespace TgPics.WebApi.Services;
 public class BotService : IHostedService, IDisposable
 {
     public BotService(
-        string botToken,
-        string adminChatId,
-        string tgChannelUsername,
+        ISettingsService settingsService,
         IPostService postService,
-        IFileService fileService)
+        IFileService fileService,
+        DatabaseService database)
     {
-        // TODO: вынести эти настройки в сервис
-        this.adminChatId = adminChatId;
-        this.tgChannelUsername = tgChannelUsername;
+        tgAdminChatId = settingsService.TgAdminChatId;
+        tgChannelUsername = settingsService.TgChannelUsername;
+
         this.postService = postService;
         this.fileService = fileService;
+        this.database = database;
 
-        bot = InitializeTelegramBot(botToken);
+        bot = InitializeTelegramBot(settingsService.BotToken);
         SendApiStartedNotification();
     }
 
     private Timer? timer;
     private readonly TelegramBotClient bot;
 
-    private readonly string adminChatId;
+    private readonly string tgAdminChatId;
     private readonly string tgChannelUsername;
-    private readonly string vkPublicUsername;
+    //private readonly string vkPublicUsername;
     private readonly IPostService postService;
     private readonly IFileService fileService;
+    private readonly DatabaseService database;
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
@@ -81,7 +82,7 @@ public class BotService : IHostedService, IDisposable
 
         try
         {
-            await bot.SendTextMessageAsync(adminChatId,
+            await bot.SendTextMessageAsync(tgAdminChatId,
                 $"ℹ️ Бот запущен.\nКанал: [{channelTitle}]({url})",
                 ParseMode.Markdown,
                 disableWebPagePreview: false);
@@ -95,7 +96,6 @@ public class BotService : IHostedService, IDisposable
     async Task CheckForNewPostsAndPostIfThereAreAny()
     {
         // TODO: перенести это в сервис постов
-        using var database = new DatabaseService();
         if (database.Posts.Any(p => p.PublicationDateTime < DateTime.Now))
         {
             var post = database.Posts
@@ -120,7 +120,7 @@ public class BotService : IHostedService, IDisposable
 
                     try
                     {
-                        await bot.SendTextMessageAsync(adminChatId,
+                        await bot.SendTextMessageAsync(tgAdminChatId,
                             $"❌ Ошибка.\nНе удалось опубликоват пост с id=`{post.Id}`" +
                             $" [{post.SourceTitle}]({post.SourceLink})\nТекст ошибки: `{post.PublicationError}`",
                             ParseMode.Markdown,
@@ -183,7 +183,7 @@ public class BotService : IHostedService, IDisposable
             if (message == null) return;
 
             var chatId = message.Chat.Id;
-            if (chatId.ToString() != adminChatId) return;
+            if (chatId.ToString() != tgAdminChatId) return;
 
             if (message.Type == MessageType.Text &&
                 message.Text != null)

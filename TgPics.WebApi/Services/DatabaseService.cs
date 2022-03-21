@@ -5,22 +5,13 @@ namespace TgPics.WebApi.Services;
 
 public class DatabaseService : DbContext
 {
-    public static string ConnectionString { get; set; }
-
-    public DbSet<Post> Posts { get; set; }
-    public DbSet<MediaFile> Uploads { get; set; }
-
-    public DatabaseService()
+    public DatabaseService(DbContextOptions<DatabaseService> options)
+        : base(options)
     {
         //Database.EnsureDeleted();
         Database.EnsureCreated();
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseMySql(
-            ConnectionString,
-            new MySqlServerVersion(new Version(8, 0, 11))
-        );
-    }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<MediaFile> Uploads { get; set; }
 }

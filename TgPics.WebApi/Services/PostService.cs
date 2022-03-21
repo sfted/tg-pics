@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using TgPics.Core.Entities;
 using TgPics.Core.Models;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
-using TgPics.WebApi.Helpers;
 
 namespace TgPics.WebApi.Services;
 
@@ -22,21 +20,23 @@ public interface IPostService
 public class PostService : IPostService
 {
     public PostService(
-        IOptions<AppSettings> settings,
-        IFileService fileService)
+        ISettingsService settingsService,
+        IFileService fileService,
+        DatabaseService database)
     {
-        this.settings = settings.Value;
+        this.settingsService = settingsService;
         this.fileService = fileService;
+        this.database = database;
     }
 
     private const string CONFIRMATION = "yeah, kill 'em all.";
-    private readonly AppSettings settings;
+
+    private readonly ISettingsService settingsService;
     private readonly IFileService fileService;
+    private readonly DatabaseService database;
 
     public PostModel Get(string host, int id)
     {
-        using var database = new DatabaseService();
-
         var post = database.Posts
             .AsNoTracking()
             .FirstOrDefault(p => p.Id == id);
@@ -57,8 +57,6 @@ public class PostService : IPostService
             throw new ArgumentOutOfRangeException(
                 nameof(offset), offset, "Значение должно быть больше либо равно нулю.");
 
-        using var database = new DatabaseService();
-
         var posts = database.Posts
             .AsNoTracking()
             .Skip(offset)
@@ -77,8 +75,6 @@ public class PostService : IPostService
 
     public Post Add(PostsAddRequest request)
     {
-        using var database = new DatabaseService();
-
         var post = new Post
         {
             SourceLink = request.SourceLink,
@@ -104,7 +100,7 @@ public class PostService : IPostService
                 .OrderBy(p => p.PublicationDateTime).Last();
 
             var timing = lastPost.PublicationDateTime.TimeOfDay;
-            var nextTiming = settings.Timings.First(t => t > timing);
+            var nextTiming = settingsService.Timings.First(t => t > timing);
 
             post.PublicationDateTime = lastPost
                 .PublicationDateTime.Date.Add(nextTiming);
@@ -112,7 +108,7 @@ public class PostService : IPostService
         else
         {
             var timing = DateTime.Now.TimeOfDay;
-            var nextTiming = settings.Timings.First(t => t > timing);
+            var nextTiming = settingsService.Timings.First(t => t > timing);
             post.PublicationDateTime = DateTime.Now.Date.Add(nextTiming);
         }
 
@@ -127,8 +123,6 @@ public class PostService : IPostService
 
     public void Remove(IdRequest request)
     {
-        using var database = new DatabaseService();
-
         var post = database.Posts
             .Include(p => p.Media)
             .FirstOrDefault(p => p.Id == request.Id);
@@ -147,8 +141,6 @@ public class PostService : IPostService
 
     public void PostNow(IdRequest request)
     {
-        using var database = new DatabaseService();
-
         var post = database.Posts
             .FirstOrDefault(p => p.Id == request.Id);
 
@@ -166,7 +158,6 @@ public class PostService : IPostService
     {
         if (request.Confirmation == CONFIRMATION)
         {
-            using var database = new DatabaseService();
             database.Posts.RemoveRange(database.Posts);
 
             await database.Uploads.ForEachAsync(

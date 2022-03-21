@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TgPics.Core.Entities;
+using TgPics.Core.Models.Responses;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeAttribute : Attribute, IAuthorizationFilter
@@ -11,7 +12,12 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {
         if (context.HttpContext.Items["User"] is not User)
         {
-            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
+            var result = new JsonResult(new MessageResponse("Unauthorized"))
+            {
+                StatusCode = StatusCodes.Status401Unauthorized
+            };
+
+            context.Result = result;
         }
     }
 }
