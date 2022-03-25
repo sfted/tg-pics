@@ -15,7 +15,12 @@ public static class Extensions
                 configuration["AdminPwd"],
                 configuration["BotToken"],
                 configuration["TgAdminChatId"],
-                configuration["TgChannelUsername"]
+                configuration["TgChannelUsername"],
+                configuration["VkApiToken"],
+                Convert.ToInt32(configuration["VkGroupId"]),
+                Convert.ToInt32(configuration["VkAppId"]),
+                Convert.ToInt32(configuration["VkUserId"]),
+                configuration["VkVideoTitle"]
             )
         );
 

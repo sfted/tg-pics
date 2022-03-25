@@ -1,9 +1,11 @@
-﻿namespace TgPics.WebApiWrapper;
-
-using HttpTracer;
+﻿using HttpTracer;
 using RestSharp;
 using TgPics.Core.Models;
+using TgPics.Core.Models.Requests;
+using TgPics.Core.Models.Responses;
 using TgPics.WebApiWrapper.Helpers;
+
+namespace TgPics.WebApiWrapper;
 
 public class TgPicsClient
 {
@@ -34,7 +36,7 @@ public class TgPicsClient
     public async Task<AuthenticateResponse> AuthAsync(
         AuthenticateRequest parameters) => await AuthAndSaveTokenAsync(parameters);
 
-    public async Task AddPostAsync(AddPostRequest parameters) =>
+    public async Task AddPostAsync(PostsAddRequest parameters) =>
         await Post(parameters, "api/posts/add", token);
 
     public async Task RemovePostAsync(RemovePostRequest parameters) =>
@@ -43,9 +45,23 @@ public class TgPicsClient
     public async Task<PostsGetAllResponse> GetAllPostsAsync() =>
         await Get<PostsGetAllResponse>("api/posts/getall", token);
 
-    public async Task RemoveAllPostsAsync(RemoveAllPostsRequest parameters) =>
+    public async Task RemoveAllPostsAsync(PostsRemoveAllRequest parameters) =>
         await Post(parameters, "api/posts/removeall", token);
 
+    public async Task<List<MediaFileInfo>> UploadFilesAsync(List<string> filePaths)
+    {
+        var request = new RestRequest("api/files/upload")
+            .AddHeader("Content-Type", "multipart/form-data")
+            .AddHeader("Authorization", $"Bearer {token}");
+
+        request.AlwaysMultipartFormData = true;
+
+        foreach (var path in filePaths)
+            request.AddFile($"files", path);
+        //[{Path.GetFileName(path)}]
+
+        return await restClient.PostAsync<List<MediaFileInfo>>(request);
+    }
 
     private async Task<AuthenticateResponse> AuthAndSaveTokenAsync(
        AuthenticateRequest parameters)

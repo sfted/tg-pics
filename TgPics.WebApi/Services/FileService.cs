@@ -86,6 +86,9 @@ public class FileService : IFileService
     public async Task<List<MediaFileInfo>> UploadAsync(
         string host, IFormFile[] files)
     {
+        if (!files.Any())
+            throw new Exception("You must upload at least one file.");
+
         foreach (var file in files)
         {
             var extension = Path.GetExtension(file.FileName);

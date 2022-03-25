@@ -37,8 +37,10 @@ public class UserService : IUserService
     {
         var user = Users.SingleOrDefault(
             u => u.Username == model.Username && u.Password == model.Password);
+        Console.WriteLine("smth11");
 
         if (user == null) return null;
+        Console.WriteLine("smth12");
 
         return new AuthenticateResponse(user, GenerateJwtToken(user));
     }

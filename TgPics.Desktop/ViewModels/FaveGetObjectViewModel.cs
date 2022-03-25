@@ -92,7 +92,7 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
             new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
             {
                 SourceLink = Url,
-                SourceTitle = $"vk // {GroupName}",
+                SourceTitle = $"{GroupName}",
                 Photos = Photos.Select(p => new Core.Models.PrepareToPublishPhoto
                 {
                     OriginalUrl = p.OriginalUri,

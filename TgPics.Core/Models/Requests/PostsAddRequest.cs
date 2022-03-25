@@ -5,15 +5,22 @@ namespace TgPics.Core.Models.Requests;
 
 public class PostsAddRequest
 {
+    public PostsAddRequest() : this(
+        new List<int>(),
+        string.Empty,
+        string.Empty,
+        string.Empty)
+    { }
+
     public PostsAddRequest(
-        List<int> mediaIds, 
+        List<int> media_ids,
         string sourceLink,
         string sourcePlatform,
         string sourceTitle,
         string? inviteLink = null,
         string? comment = null)
     {
-        MediaIds = mediaIds;
+        MediaIds = media_ids;
         SourceLink = sourceLink;
         SourcePlatfrom = sourcePlatform;
         SourceTitle = sourceTitle;

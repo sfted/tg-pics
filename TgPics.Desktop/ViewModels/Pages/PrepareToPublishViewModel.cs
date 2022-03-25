@@ -1,13 +1,14 @@
-﻿namespace TgPics.Desktop.ViewModels.Pages;
-
-using Newtonsoft.Json;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using TgPics.Core.Models;
+using System.Net;
+using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.WebApiWrapper;
+
+namespace TgPics.Desktop.ViewModels.Pages;
 
 public class PrepareToPublishViewModel : ViewModelBase
 {
@@ -38,28 +39,47 @@ public class PrepareToPublishViewModel : ViewModelBase
 
     private async void Publish()
     {
-        if(SelectedPhotos != null && SelectedPhotos.Count > 0)
+        // TODO: ПЕРЕПИСАТЬ ВСЁ!!!
+        if (SelectedPhotos != null && SelectedPhotos.Count > 0)
         {
-            Post.SetTagToOriginalPost();
+            var tempDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "tgpicstemp");
 
-            var request = new AddPostRequest
+            if(!Directory.Exists(tempDir))
+                Directory.CreateDirectory(tempDir);
+
+            var paths = new List<string>();
+            using (var web = new WebClient())
             {
-                SourceLink = Post.Model.SourceLink.ToString(),
-                SourceTitle = Post.Model.SourceTitle,
-                Comment = Comment,
-                MediaIds = SelectedPhotos.Select(p => new PictureInfo
-                {
-                    Url = p.Model.OriginalUrl.ToString()
-                })
-            };
-
-            Debug.WriteLine(JsonConvert.SerializeObject(request));
+                var counter = 0;
+                SelectedPhotos.ForEach(p =>
+                    {
+                        var path = $"{tempDir}//image_{counter++}.jpg";
+                        web.DownloadFile(p.Model.OriginalUrl, path);
+                        paths.Add(path);
+                    }
+                );
+            }
 
             var client = new TgPicsClient(
                 Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_HOST),
                 Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_TOKEN));
 
+            var files = await client.UploadFilesAsync(paths);
+
+            var request = new PostsAddRequest
+            {
+                SourceLink = Post.Model.SourceLink.ToString(),
+                SourcePlatfrom = "vk",
+                SourceTitle = Post.Model.SourceTitle,
+                Comment = Comment,
+                MediaIds = files.Select(f => f.Id).ToList()
+            };
+
             await client.AddPostAsync(request);
+
+            Post.SetTagToOriginalPost();
         }
     }
 }

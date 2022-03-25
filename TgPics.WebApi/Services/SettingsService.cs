@@ -8,18 +8,29 @@ public interface ISettingsService
     public string BotToken { get; }
     public string TgAdminChatId { get; }
     public string TgChannelUsername { get; }
+    public string VkApiToken { get; }
+    public int VkGroupId { get; set; }
+    public int VkAppId { get; set; }
+    public int VkUserId { get; set; }
+    public string VkVideoTitle { get; set; }
     public List<TimeSpan> Timings { get; }
 }
 
 public class SettingsService : ISettingsService
 {
+    // TODO: переписать.
     public SettingsService(
         int postsPerDay,
         string webApiKey,
         string adminPwd,
         string botToken,
         string tgAdminChatId,
-        string tgChannelUsername)
+        string tgChannelUsername,
+        string vkApiToken,
+        int vkGroupId,
+        int vkAppId,
+        int vkUserId,
+        string vkVideoTitle)
     {
         PostsPerDay = postsPerDay;
         WebApiKey = webApiKey;
@@ -27,6 +38,11 @@ public class SettingsService : ISettingsService
         BotToken = botToken;
         TgAdminChatId = tgAdminChatId;
         TgChannelUsername = tgChannelUsername;
+        VkApiToken = vkApiToken;
+        VkGroupId = vkGroupId;
+        VkAppId = vkAppId;
+        VkUserId = vkUserId;
+        VkVideoTitle = vkVideoTitle;
 
         Timings = CalculateTimings(PostsPerDay);
     }
@@ -37,6 +53,11 @@ public class SettingsService : ISettingsService
     public string BotToken { get; set; }
     public string TgAdminChatId { get; set; }
     public string TgChannelUsername { get; set; }
+    public string VkApiToken { get; set; }
+    public int VkGroupId { get; set; }
+    public int VkAppId { get; set; }
+    public int VkUserId { get; set; }
+    public string VkVideoTitle { get; set; }
     public List<TimeSpan> Timings { get; private set; }
 
     static List<TimeSpan> CalculateTimings(int interval)

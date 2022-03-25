@@ -55,8 +55,9 @@ public class JwtMiddleware
             // attach user to context on successful jwt validation
             context.Items[USER_KEY] = userService.GetById(userId);
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             // do nothing if jwt validation fails
             // user is not attached to context so request won't have access to secure routes
         }

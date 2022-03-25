@@ -1,13 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestSharp;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TgPics.Core.Entities;
+using TgPics.Core.Enums;
 using TgPics.Core.Models.Requests;
+using VkNet;
+using VkNet.Enums.Filters;
+using VkNet.Model;
+using VkNet.Model.Attachments;
+using VkNet.Model.RequestParams;
 
 namespace TgPics.WebApi.Services;
+
+// TODO: ПЕРЕПИСАТЬ И ОТРЕФАКТОРИТЬ ВСЁ НАХУЙ
 
 public class BotService : IHostedService, IDisposable
 {
@@ -17,9 +25,7 @@ public class BotService : IHostedService, IDisposable
         IFileService fileService,
         DatabaseService database)
     {
-        tgAdminChatId = settingsService.TgAdminChatId;
-        tgChannelUsername = settingsService.TgChannelUsername;
-
+        this.settingsService = settingsService;
         this.postService = postService;
         this.fileService = fileService;
         this.database = database;
@@ -31,9 +37,7 @@ public class BotService : IHostedService, IDisposable
     private Timer? timer;
     private readonly TelegramBotClient bot;
 
-    private readonly string tgAdminChatId;
-    private readonly string tgChannelUsername;
-    //private readonly string vkPublicUsername;
+    private readonly ISettingsService settingsService;
     private readonly IPostService postService;
     private readonly IFileService fileService;
     private readonly DatabaseService database;
@@ -77,12 +81,12 @@ public class BotService : IHostedService, IDisposable
 
     async void SendApiStartedNotification()
     {
-        var channelTitle = bot.GetChatAsync(tgChannelUsername).Result.Title;
-        var url = tgChannelUsername.Replace("@", "https://t.me/");
+        var channelTitle = bot.GetChatAsync(settingsService.TgChannelUsername).Result.Title;
+        var url = settingsService.TgChannelUsername.Replace("@", "https://t.me/");
 
         try
         {
-            await bot.SendTextMessageAsync(tgAdminChatId,
+            await bot.SendTextMessageAsync(settingsService.TgAdminChatId,
                 $"ℹ️ Бот запущен.\nКанал: [{channelTitle}]({url})",
                 ParseMode.Markdown,
                 disableWebPagePreview: false);
@@ -108,7 +112,8 @@ public class BotService : IHostedService, IDisposable
             {
                 try
                 {
-                    await PostToTelegram(tgChannelUsername, post);
+                    await PostToTelegram(post);
+                    await PostToVkontakte(post);
 
                     postService.Remove(new IdRequest(post.Id));
                 }
@@ -118,15 +123,11 @@ public class BotService : IHostedService, IDisposable
                     post.PublicationError = ex.ToString();
                     database.SaveChanges();
 
-                    try
-                    {
-                        await bot.SendTextMessageAsync(tgAdminChatId,
-                            $"❌ Ошибка.\nНе удалось опубликоват пост с id=`{post.Id}`" +
-                            $" [{post.SourceTitle}]({post.SourceLink})\nТекст ошибки: `{post.PublicationError}`",
-                            ParseMode.Markdown,
-                            disableWebPagePreview: false);
-                    }
-                    catch { }
+                    await bot.SendTextMessageAsync(settingsService.TgAdminChatId,
+                        $"❌ Ошибка.\nНе удалось опубликоват пост с id=`{post.Id}`" +
+                        $" [{post.SourceTitle}]({post.SourceLink})\nТекст ошибки: `{post.PublicationError}`",
+                        ParseMode.Markdown,
+                        disableWebPagePreview: false);
                 }
             }
         }
@@ -183,7 +184,7 @@ public class BotService : IHostedService, IDisposable
             if (message == null) return;
 
             var chatId = message.Chat.Id;
-            if (chatId.ToString() != tgAdminChatId) return;
+            if (chatId.ToString() != settingsService.TgAdminChatId) return;
 
             if (message.Type == MessageType.Text &&
                 message.Text != null)
@@ -286,18 +287,182 @@ public class BotService : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    async Task PostToTelegram(string channelUsername, Post post)
+    async Task PostToTelegram(Core.Entities.Post post)
     {
         await bot.SendMediaGroupAsync(
-            channelUsername, MakeInputMedia(post));
+            settingsService.TgChannelUsername,
+            MakeTelegramInputMedia(post));
     }
 
-    async Task PostToVkontakte(string publicUsername, Post post)
+    // TODO: переписать, разбить на методы
+    //       и мб даже вынести в отдельный класс.
+    async Task PostToVkontakte(Core.Entities.Post post)
     {
+        var groupId = settingsService.VkGroupId;
 
+        var api = new VkApi();
+        api.Authorize(new ApiAuthParams
+        {
+            AccessToken = settingsService.VkApiToken,
+            ApplicationId = Convert.ToUInt64(settingsService.VkAppId),
+            UserId = Convert.ToInt64(settingsService.VkUserId),
+            Settings = Settings.All
+        });
+
+        var albums = api.Photo.GetAlbums(new PhotoGetAlbumsParams
+        {
+            OwnerId = -groupId
+        });
+
+        var title = $"{DateTime.Now.Year}Q{GetQuarter(DateTime.Now)}";
+        var album = albums.Where(a => a.Title == title).FirstOrDefault();
+
+        if (album == null)
+        {
+            album = api.Photo.CreateAlbum(new PhotoCreateAlbumParams
+            {
+                Title = title,
+                GroupId = groupId,
+                UploadByAdminsOnly = true,
+                CommentsDisabled = true,
+            });
+        }
+
+        var caption = $"src: {post.SourcePlatform} // {post.SourceTitle}\n" +
+            $"url: {post.SourceLink}";
+
+        if (!string.IsNullOrEmpty(post.InviteLink))
+            caption += $"\ninv: {post.InviteLink}";
+
+        // TODO: сделать ограничение на кол-во фоток/видео в посте (10).
+        // TODO: сделать ограничение на постинг либо только фото,
+        //       либо только видео в одном посте.
+        // TODO: сделать ограничение на количество видосов в посте (1)
+        // TODO: прописать ограничения на размер видоса (20 мб с учетом телеги)
+
+        // если медиа содержит видосы, то загружаем только их
+        if (post.Media.Where(m => m.Type == MediaType.Video).Any())
+        {
+            var video = post.Media
+                .Where(m => m.Type == MediaType.Video)
+                .First();
+
+            var saveResponse = api.Video.Save(new VideoSaveParams
+            {
+                // TODO: вынести эту строку в конфиг
+                Name = settingsService.VkVideoTitle,
+                //Description = caption,
+                IsPrivate = false,
+                GroupId = groupId,
+                NoComments = true,
+                Wallpost = false
+            });
+
+            var request = new RestRequest(saveResponse.UploadUrl)
+                .AddFile("video_file", fileService.Get(video.Id).PhysicalPath);
+
+            request.AlwaysMultipartFormData = true;
+            var response = await new RestClient().PostAsync<VideoUploadResult>(request);
+
+            api.Wall.Post(new WallPostParams
+            {
+                OwnerId = -groupId,
+                Message = post.Comment,
+                Attachments = new List<MediaAttachment>
+                {
+                    new VkNet.Model.Attachments.Video
+                    {
+                        Id = response!.video_id,
+                        OwnerId = -groupId
+                    }
+                },
+                Signed = false,
+                Copyright = post.SourceLink
+            });
+        }
+        else
+        {
+            // первые 5 фоток
+            var pictures = post.Media
+                .Take(5)
+                .Where(m => m.Type == MediaType.Picture)
+                .ToList();
+
+            var uploadServer = api.Photo.GetUploadServer(album.Id, groupId);
+
+            var request = new RestRequest(uploadServer.UploadUrl)
+            {
+                AlwaysMultipartFormData = true
+            };
+
+            for (int i = 0; i < pictures.Count; i++)
+            {
+                request.AddFile(
+                    $"file{i + 1}",
+                    fileService.Get(pictures[i].Id).PhysicalPath);
+            }
+
+            var response = await new RestClient().PostAsync(request);
+
+            var uploadedPhotos = api.Photo.Save(new PhotoSaveParams
+            {
+                AlbumId = album.Id,
+                GroupId = groupId,
+                SaveFileResponse = response.Content,
+                // честно, я вк рот ебал
+                // вот скажите мне, нахуя он постит описание фотки как текст поста
+                // ????????
+                //Caption = caption
+            }).ToList();
+
+            // оставшиеся 5 фоток
+            pictures = post.Media
+                .Skip(5)
+                .Take(5)
+                .Where(m => m.Type == MediaType.Picture)
+                .ToList();
+
+            if (pictures.Any())
+            {
+                uploadServer = api.Photo.GetUploadServer(album.Id, groupId);
+
+                request = new RestRequest(uploadServer.UploadUrl)
+                {
+                    AlwaysMultipartFormData = true
+                };
+
+                for (int i = 0; i < pictures.Count; i++)
+                {
+                    request.AddFile(
+                        $"file{i + 1}",
+                        fileService.Get(pictures[i].Id).PhysicalPath);
+                }
+
+                response = await new RestClient().PostAsync(request);
+
+                var uploadedPhotos2 = api.Photo.Save(new PhotoSaveParams
+                {
+                    AlbumId = album.Id,
+                    GroupId = groupId,
+                    SaveFileResponse = response.Content,
+                    Caption = caption
+                }).ToList();
+
+                uploadedPhotos.AddRange(uploadedPhotos2);
+            }
+
+            api.Wall.Post(new WallPostParams
+            {
+                OwnerId = -groupId,
+                Message = post.Comment,
+                Attachments = uploadedPhotos,
+                Signed = false,
+                Copyright = post.SourceLink
+            });
+        }
     }
 
-    List<IAlbumInputMedia> MakeInputMedia(Post post)
+    List<IAlbumInputMedia> MakeTelegramInputMedia(Core.Entities.Post post)
     {
         var medias = post.Media.ToList();
 
@@ -359,5 +524,23 @@ public class BotService : IHostedService, IDisposable
         }
 
         return result;
+    }
+
+    static int GetQuarter(DateTime date)
+    {
+        if (date.Month >= 1 && date.Month <= 3)
+            return 1;
+        else if (date.Month >= 4 && date.Month <= 6)
+            return 2;
+        else if (date.Month >= 7 && date.Month <= 9)
+            return 3;
+        else
+            return 4;
+    }
+
+    class VideoUploadResult
+    {
+        public int size { get; set; }
+        public int video_id { get; set; }
     }
 }
