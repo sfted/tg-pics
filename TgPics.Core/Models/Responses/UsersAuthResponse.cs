@@ -1,12 +1,12 @@
-﻿namespace TgPics.Core.Models;
+﻿namespace TgPics.Core.Models.Responses;
 
 using TgPics.Core.Entities;
 
-public class AuthenticateResponse
+public class UsersAuthResponse
 {
-    public AuthenticateResponse() { }
+    public UsersAuthResponse() { }
 
-    public AuthenticateResponse(User user, string token)
+    public UsersAuthResponse(User user, string token)
     {
         Id = user.Id;
         Username = user.Username;

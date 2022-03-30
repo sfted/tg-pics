@@ -137,7 +137,7 @@ public class SettingsViewModel : ViewModelBase
     private async void ProceedLogin(LoginPage page)
     {
         var client = new TgPicsClient(TgPicsHost);
-        var request = new AuthenticateRequest
+        var request = new UserAuthRequest
         {
             Username = page.ViewModel.Username,
             Password = page.ViewModel.Password

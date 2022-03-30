@@ -21,8 +21,8 @@ public class BotService : IHostedService, IDisposable
 {
     public BotService(
         ISettingsService settingsService,
-        IPostService postService,
-        IFileService fileService,
+        IPostsService postService,
+        IFilesService fileService,
         DatabaseService database)
     {
         this.settingsService = settingsService;
@@ -38,8 +38,8 @@ public class BotService : IHostedService, IDisposable
     private readonly TelegramBotClient bot;
 
     private readonly ISettingsService settingsService;
-    private readonly IPostService postService;
-    private readonly IFileService fileService;
+    private readonly IPostsService postService;
+    private readonly IFilesService fileService;
     private readonly DatabaseService database;
 
     public Task StartAsync(CancellationToken stoppingToken)
@@ -488,7 +488,7 @@ public class BotService : IHostedService, IDisposable
                     caption = caption.Insert(0, $"{post.Comment}\n");
 
                 IAlbumInputMedia? finalMedia = null;
-                if (extension is FileService.JPEG or FileService.JPG)
+                if (extension is FilesService.JPEG or FilesService.JPG)
                 {
                     finalMedia = new InputMediaPhoto(media)
                     {
@@ -496,7 +496,7 @@ public class BotService : IHostedService, IDisposable
                         Caption = caption
                     };
                 }
-                else if (extension is FileService.MP4)
+                else if (extension is FilesService.MP4)
                 {
                     finalMedia = new InputMediaVideo(media)
                     {
@@ -513,9 +513,9 @@ public class BotService : IHostedService, IDisposable
             {
                 IAlbumInputMedia? finalMedia = null;
 
-                if (extension is FileService.JPEG or FileService.JPG)
+                if (extension is FilesService.JPEG or FilesService.JPG)
                     finalMedia = new InputMediaPhoto(media);
-                else if (extension is FileService.MP4)
+                else if (extension is FilesService.MP4)
                     finalMedia = new InputMediaVideo(media) { SupportsStreaming = true };
 
                 if (finalMedia != null)

@@ -9,12 +9,12 @@ using TgPics.WebApi.Services;
 [Route("api/files")]
 public class FilesController : ControllerBase
 {
-    public FilesController(IFileService service)
+    public FilesController(IFilesService service)
     {
         this.service = service;
     }
 
-    readonly IFileService service;
+    readonly IFilesService service;
 
     [HttpGet("get")]
     public IActionResult Get(int id)
@@ -27,10 +27,10 @@ public class FilesController : ControllerBase
 
             return extension switch
             {
-                FileService.JPG or FileService.JPEG => File(file, "image/jpeg"),
-                FileService.MP4 => File(file, "video/mp4", enableRangeProcessing: true),
+                FilesService.JPG or FilesService.JPEG => File(file, "image/jpeg"),
+                FilesService.MP4 => File(file, "video/mp4", enableRangeProcessing: true),
                 _ => throw new NotSupportedException(
-                    $"This file type ('{extension}') is not supported.")
+                    $"Этот тип файла ('{extension}') не поддерживается.")
             };
         }
         catch (Exception ex)
@@ -79,7 +79,6 @@ public class FilesController : ControllerBase
         try
         {
             service.Remove(request);
-
             return Ok();
         }
         catch (Exception ex)

@@ -1,8 +1,8 @@
-﻿namespace TgPics.Core.Models;
+﻿namespace TgPics.Core.Models.Requests;
 
 using System.ComponentModel.DataAnnotations;
 
-public class AuthenticateRequest
+public class UsersAuthRequest
 {
     [Required]
     public string Username { get; set; }

@@ -33,13 +33,13 @@ public class TgPicsClient
     private readonly RestClient restClient;
 
 
-    public async Task<AuthenticateResponse> AuthAsync(
-        AuthenticateRequest parameters) => await AuthAndSaveTokenAsync(parameters);
+    public async Task<UsersAuthResponse> AuthAsync(
+        UsersAuthRequest parameters) => await AuthAndSaveTokenAsync(parameters);
 
     public async Task AddPostAsync(PostsAddRequest parameters) =>
         await Post(parameters, "api/posts/add", token);
 
-    public async Task RemovePostAsync(RemovePostRequest parameters) =>
+    public async Task RemovePostAsync(IdRequest parameters) =>
         await Post(parameters, "api/posts/remove", token);
 
     public async Task<PostsGetAllResponse> GetAllPostsAsync() =>
@@ -51,8 +51,8 @@ public class TgPicsClient
     public async Task<List<MediaFileInfo>> UploadFilesAsync(List<string> filePaths)
     {
         var request = new RestRequest("api/files/upload")
-            .AddHeader("Content-Type", "multipart/form-data")
-            .AddHeader("Authorization", $"Bearer {token}");
+            .AddHeader("Authorization", $"Bearer {token}")
+            .AddHeader("Content-Type", "multipart/form-data");
 
         request.AlwaysMultipartFormData = true;
 
@@ -63,10 +63,10 @@ public class TgPicsClient
         return await restClient.PostAsync<List<MediaFileInfo>>(request);
     }
 
-    private async Task<AuthenticateResponse> AuthAndSaveTokenAsync(
-       AuthenticateRequest parameters)
+    private async Task<UsersAuthResponse> AuthAndSaveTokenAsync(
+       UsersAuthRequest parameters)
     {
-        var response = await Post<AuthenticateRequest, AuthenticateResponse>(
+        var response = await Post<UsersAuthRequest, UsersAuthResponse>(
             parameters, "api/auth");
 
         token = response.Token;

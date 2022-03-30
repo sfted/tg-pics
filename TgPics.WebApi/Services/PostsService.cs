@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace TgPics.WebApi.Services;
+
+using Microsoft.EntityFrameworkCore;
 using TgPics.Core.Entities;
 using TgPics.Core.Models;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
 
-namespace TgPics.WebApi.Services;
-
-public interface IPostService
+public interface IPostsService
 {
     public PostModel Get(string host, int id);
     public PostsGetAllResponse GetAll(string host, int count = 10, int offset = 0);
@@ -17,11 +17,11 @@ public interface IPostService
     public Task<MessageResponse> RemoveAllAsync(PostsRemoveAllRequest request);
 }
 
-public class PostService : IPostService
+public class PostsService : IPostsService
 {
-    public PostService(
+    public PostsService(
         ISettingsService settingsService,
-        IFileService fileService,
+        IFilesService fileService,
         DatabaseService database)
     {
         this.settingsService = settingsService;
@@ -32,7 +32,7 @@ public class PostService : IPostService
     private const string CONFIRMATION = "yeah, kill 'em all.";
 
     private readonly ISettingsService settingsService;
-    private readonly IFileService fileService;
+    private readonly IFilesService fileService;
     private readonly DatabaseService database;
 
     public PostModel Get(string host, int id)

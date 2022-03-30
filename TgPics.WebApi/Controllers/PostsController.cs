@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace TgPics.WebApi.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Services;
 
-namespace TgPics.WebApi.Controllers;
-
 [ApiController]
 [Route("api/posts")]
 public class PostsController : ControllerBase
 {
-    public PostsController(IPostService service)
+    public PostsController(IPostsService service)
     {
         this.service = service;
     }
 
-    private readonly IPostService service;
+    private readonly IPostsService service;
 
     [Authorize]
     [HttpGet("get")]
@@ -98,9 +98,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var count = await service.RemoveAllAsync(request);
-
-            return Ok(count);
+            var response = await service.RemoveAllAsync(request);
+            return Ok(response);
         }
         catch (ArgumentException ex)
         {

@@ -20,9 +20,9 @@ builder.Services
     })
     .AddSettings(builder.Configuration)
     .AddDatabase(connection)
-    .AddTransient<IUserService, UserService>()
-    .AddTransient<IPostService, PostService>()
-    .AddTransient<IFileService, FileService>()
+    .AddTransient<IUsersService, UsersService>()
+    .AddTransient<IPostsService, PostsService>()
+    .AddTransient<IFilesService, FilesService>()
     .AddHostedService<BotService>()
     // ???
     // TODO: разобраться че это за хуйня

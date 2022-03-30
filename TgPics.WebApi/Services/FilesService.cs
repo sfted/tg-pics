@@ -8,14 +8,14 @@ using TgPics.Core.Models;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
 
-public interface IFileService
+public interface IFilesService
 {
     public IFileInfo Get(int id);
 
-    public FilesGetAllResponse GetAll(
+    public ListResponse<MediaFileInfo> GetAll(
         string host, int count, int offset);
 
-    public Task<List<MediaFileInfo>> UploadAsync(
+    public Task<ListResponse<MediaFileInfo>> UploadAsync(
         string host, IFormFile[] files);
 
     public Task<int> UploadAsync(IFormFile file);
@@ -24,9 +24,9 @@ public interface IFileService
     public void Remove(DatabaseService database, IdRequest request);
 }
 
-public class FileService : IFileService
+public class FilesService : IFilesService
 {
-    public FileService(
+    public FilesService(
         IWebHostEnvironment environment,
         DatabaseService database)
     {
@@ -62,7 +62,7 @@ public class FileService : IFileService
         return info;
     }
 
-    public FilesGetAllResponse GetAll(string host, int count, int offset)
+    public ListResponse<MediaFileInfo> GetAll(string host, int count, int offset)
     {
         if (count <= 0)
             throw new ArgumentOutOfRangeException(
@@ -80,10 +80,10 @@ public class FileService : IFileService
             .Select(f => new MediaFileInfo(host, f))
             .ToList();
 
-        return new FilesGetAllResponse(database.Uploads.Count(), files);
+        return new ListResponse<MediaFileInfo>(database.Uploads.Count(), files);
     }
 
-    public async Task<List<MediaFileInfo>> UploadAsync(
+    public async Task<ListResponse<MediaFileInfo>> UploadAsync(
         string host, IFormFile[] files)
     {
         if (!files.Any())
@@ -110,7 +110,7 @@ public class FileService : IFileService
             infos.Add(info);
         }
 
-        return infos;
+        return new ListResponse<MediaFileInfo>(infos.Count, infos);
     }
 
     public async Task<int> UploadAsync(IFormFile file)
@@ -120,7 +120,7 @@ public class FileService : IFileService
         if (extension != JPG && extension != JPEG && extension != MP4)
             throw new NotSupportedException($"This file format ({extension}) is not supported.");
 
-        // небольшой костыль — host: string.Empty
+        // небольшой костыль — host: null
         var info = await SaveFileAndGetInfo(
             null, environment.ContentRootPath, file);
 

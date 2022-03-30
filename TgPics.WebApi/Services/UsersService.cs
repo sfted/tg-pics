@@ -1,20 +1,21 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿namespace TgPics.WebApi.Services;
+
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TgPics.Core.Entities;
-using TgPics.Core.Models;
+using TgPics.Core.Models.Requests;
+using TgPics.Core.Models.Responses;
 
-namespace TgPics.WebApi.Services;
-
-public interface IUserService
+public interface IUsersService
 {
-    AuthenticateResponse Authenticate(AuthenticateRequest model);
-    IEnumerable<User> GetAll();
-    User GetById(int id);
+    UsersAuthResponse? Authenticate(UsersAuthRequest model);
+    List<User> GetAll();
+    User? GetById(int id);
 }
 
-public class UserService : IUserService
+public class UsersService : IUsersService
 {
     // >users hardcoded for simplicity, store in a db
     // >with hashed passwords in production applications
@@ -26,28 +27,26 @@ public class UserService : IUserService
 
     private readonly ISettingsService settings;
 
-    public UserService(ISettingsService settings)
+    public UsersService(ISettingsService settings)
     {
         this.settings = settings;
 
         Users[0].Password = settings.AdminPwd;
     }
 
-    public AuthenticateResponse Authenticate(AuthenticateRequest model)
+    public UsersAuthResponse? Authenticate(UsersAuthRequest model)
     {
         var user = Users.SingleOrDefault(
             u => u.Username == model.Username && u.Password == model.Password);
-        Console.WriteLine("smth11");
 
         if (user == null) return null;
-        Console.WriteLine("smth12");
 
-        return new AuthenticateResponse(user, GenerateJwtToken(user));
+        return new UsersAuthResponse(user, GenerateJwtToken(user));
     }
 
-    public IEnumerable<User> GetAll() => Users;
+    public List<User> GetAll() => Users;
 
-    public User GetById(int id) =>
+    public User? GetById(int id) =>
         Users.FirstOrDefault(x => x.Id == id);
 
     private string GenerateJwtToken(User user)

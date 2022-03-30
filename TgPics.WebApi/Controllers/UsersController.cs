@@ -1,27 +1,28 @@
 ﻿namespace TgPics.WebApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using TgPics.Core.Models;
+using TgPics.Core.Models.Requests;
+using TgPics.Core.Models.Responses;
 using TgPics.WebApi.Services;
 
 [ApiController]
 [Route("api")]
 public class UsersController : ControllerBase
 {
-    private readonly IUserService service;
+    private readonly IUsersService service;
 
-    public UsersController(IUserService service)
+    public UsersController(IUsersService service)
     {
         this.service = service;
     }
 
     [HttpPost("auth")]
-    public IActionResult Authenticate(AuthenticateRequest model)
+    public IActionResult Authenticate(UsersAuthRequest request)
     {
-        var response = service.Authenticate(model);
+        var response = service.Authenticate(request);
 
         if (response == null)
-            return BadRequest(new { message = "Username or password is incorrect" });
+            return BadRequest(new MessageResponse("Неверный юзернейм или пароль"));
 
         return Ok(response);
     }

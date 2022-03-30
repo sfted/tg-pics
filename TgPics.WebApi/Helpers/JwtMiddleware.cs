@@ -20,7 +20,7 @@ public class JwtMiddleware
     readonly RequestDelegate next;
     readonly ISettingsService settingsService;
 
-    public async Task Invoke(HttpContext context, IUserService service)
+    public async Task Invoke(HttpContext context, IUsersService service)
     {
         var token = context.Request.Headers["Authorization"]
             .FirstOrDefault()?.Split(" ").Last();
@@ -32,7 +32,7 @@ public class JwtMiddleware
     }
 
     void AttachUserToContext(
-        HttpContext context, IUserService userService, string token)
+        HttpContext context, IUsersService userService, string token)
     {
         try
         {
