@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using TgPics.WebApi;
 using TgPics.WebApi.Helpers;
 using TgPics.WebApi.Services;
@@ -51,6 +53,9 @@ app.MapControllers();
 app.UseStaticFiles();
 
 if (!app.Environment.IsDevelopment())
+{
     app.UseHttpsRedirection();
+    app.UseHsts();
+}
 
 app.Run();
