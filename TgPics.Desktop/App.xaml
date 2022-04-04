@@ -21,6 +21,12 @@
                     <SolidColorBrush
                         x:Key="CardBorder"
                         Color="#eee" />
+                    <SolidColorBrush
+                        x:Key="WindowCaptionBackground"
+                        Color="#eee" />
+                    <SolidColorBrush
+                        x:Key="WindowCaptionBackgroundDisabled"
+                        Color="#eee" />
                 </ResourceDictionary>
 
                 <ResourceDictionary x:Key="Dark">
@@ -33,6 +39,12 @@
                     <SolidColorBrush
                         x:Key="CardBorder"
                         Color="#1c1c1c" />
+                    <SolidColorBrush
+                        x:Key="WindowCaptionBackground"
+                        Color="#161616" />
+                    <SolidColorBrush
+                        x:Key="WindowCaptionBackgroundDisabled"
+                        Color="#161616" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 

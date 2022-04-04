@@ -64,7 +64,7 @@ public class VkBookmarksViewModel : ViewModelBase
         {
             var parameters = new VkParameters
             {
-                { "count", 10 },
+                { "count", 50 },
                 { "extended", 1 },
                 { "offset", offset },
                 { "item_type", "post" },

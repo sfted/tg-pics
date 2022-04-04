@@ -64,9 +64,10 @@ public class PrepareToPublishViewModel : ViewModelBase
 
             var client = new TgPicsClient(
                 Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_HOST),
-                Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_TOKEN));
+                Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_TOKEN),
+                secure: false);
 
-            var files = await client.UploadFilesAsync(paths);
+            var response = await client.UploadFilesAsync(paths);
 
             var request = new PostsAddRequest
             {
@@ -74,7 +75,7 @@ public class PrepareToPublishViewModel : ViewModelBase
                 SourcePlatfrom = "vk",
                 SourceTitle = Post.Model.SourceTitle,
                 Comment = Comment,
-                MediaIds = files.Select(f => f.Id).ToList()
+                MediaIds = response.Items.Select(f => f.Id).ToList()
             };
 
             await client.AddPostAsync(request);

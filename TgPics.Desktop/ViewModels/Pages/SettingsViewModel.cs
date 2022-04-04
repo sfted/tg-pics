@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TgPics.Core.Models;
+using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Views.Pages;
@@ -137,7 +138,7 @@ public class SettingsViewModel : ViewModelBase
     private async void ProceedLogin(LoginPage page)
     {
         var client = new TgPicsClient(TgPicsHost);
-        var request = new UserAuthRequest
+        var request = new UsersAuthRequest
         {
             Username = page.ViewModel.Username,
             Password = page.ViewModel.Password

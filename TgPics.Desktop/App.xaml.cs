@@ -1,6 +1,7 @@
 ﻿namespace TgPics.Desktop;
 
 using Microsoft.UI.Xaml;
+using System.Diagnostics;
 using TgPics.Desktop.Views.Windows;
 
 public partial class App : Application
@@ -18,5 +19,7 @@ public partial class App : Application
     {
         mainWindow = new MainWindow();
         mainWindow.Activate();
+
+        Trace.Listeners.Add(new TextWriterTraceListener("system.net.log", "System.Net"));
     }
 }

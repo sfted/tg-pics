@@ -5,6 +5,8 @@ using System.Text.Json.Serialization;
 
 public class ListResponse<T>
 {
+    public ListResponse() { }
+
     public ListResponse(List<T> items)
     {
         Count = items.Count;
@@ -28,5 +30,5 @@ public class ListResponse<T>
     public int Count { get; set; }
 
     [JsonPropertyName("items")]
-    public List<T> Items { get; set; }
+    public List<T> Items { get; set; } = new();
 }

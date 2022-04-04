@@ -1,30 +1,35 @@
-﻿using HttpTracer;
+﻿namespace TgPics.WebApiWrapper;
+
+using HttpTracer;
 using RestSharp;
 using TgPics.Core.Models;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
 using TgPics.WebApiWrapper.Helpers;
 
-namespace TgPics.WebApiWrapper;
-
 public class TgPicsClient
 {
-    public TgPicsClient(string host)
+    public TgPicsClient(string host, bool secure = true)
     {
         var options = new RestClientOptions(host)
         {
             ConfigureMessageHandler = handler =>
                 new HttpTracerHandler(
                     handler,
-                    new FuckingWorkingDebugLogger(),
-                    HttpMessageParts.All)
+                    new DebugLoggerButBetter(),
+                    HttpMessageParts.ResponseHeaders | HttpMessageParts.RequestHeaders |
+                    HttpMessageParts.ResponseHeaders | HttpMessageParts.RequestCookies)
         };
+
+        if (!secure)
+            options.RemoteCertificateValidationCallback =
+                (sender, certificate, chain, sslPolicyErrors) => true;
 
         restClient = new RestClient(options);
     }
 
     public TgPicsClient(
-        string host, string token) : this(host)
+        string host, string token, bool secure = true) : this(host, secure)
     {
         this.token = token;
     }
@@ -48,7 +53,7 @@ public class TgPicsClient
     public async Task RemoveAllPostsAsync(PostsRemoveAllRequest parameters) =>
         await Post(parameters, "api/posts/removeall", token);
 
-    public async Task<List<MediaFileInfo>> UploadFilesAsync(List<string> filePaths)
+    public async Task<ListResponse<MediaFileInfo>> UploadFilesAsync(List<string> filePaths)
     {
         var request = new RestRequest("api/files/upload")
             .AddHeader("Authorization", $"Bearer {token}")
@@ -60,7 +65,7 @@ public class TgPicsClient
             request.AddFile($"files", path);
         //[{Path.GetFileName(path)}]
 
-        return await restClient.PostAsync<List<MediaFileInfo>>(request);
+        return await restClient.PostAsync<ListResponse<MediaFileInfo>>(request);
     }
 
     private async Task<UsersAuthResponse> AuthAndSaveTokenAsync(
@@ -85,7 +90,7 @@ public class TgPicsClient
         if (token != "")
             request.AddHeader("Authorization", $"Bearer {token}");
 
-        await restClient.PostAsync(request);
+        await restClient.PostAsync<T>(request);
     }
 
     protected async Task<T2> Post<T1, T2>(
