@@ -50,7 +50,8 @@
 
             <FontFamily x:Key="ContentControlThemeFontFamily">JetBrains Mono NL</FontFamily>
 
-            <x:Double x:Key="ContentDialogMaxWidth">750</x:Double>
+            <x:Double x:Key="ContentDialogMaxWidth">700</x:Double>
+            <x:Double x:Key="ContentDialogMaxHeight">550</x:Double>
 
             <SolidColorBrush
                 x:Key="NavigationViewExpandedPaneBackground"

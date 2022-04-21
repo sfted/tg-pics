@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using TgPics.Core.Models;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.MVVM.Interfaces;
@@ -52,10 +54,17 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
             else
                 HasText = false;
 
-            Photos = Model.Post.Attachments
-                .Where(a => a.Type == typeof(Photo))
-                .Select(p => new PhotoViewModel(p.Instance as Photo))
-                .ToList();
+            try
+            {
+                Photos = Model.Post.Attachments
+                    .Where(a => a.Type == typeof(Photo))
+                    .Select(p => new PhotoViewModel(p.Instance as Photo))
+                    .ToList();
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
 
             Tags = Model.Tags.ToList();
 
@@ -86,8 +95,8 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
     private void OpenInBrowser() =>
         Windows.System.Launcher.LaunchUriAsync(Url);
 
-    private void PrepareToPublish() =>
-        Desktop.App.NavgateTo(
+    private async void PrepareToPublish() =>
+        await Desktop.App.ShowDialog(
             "prepare_to_publish",
             new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
             {

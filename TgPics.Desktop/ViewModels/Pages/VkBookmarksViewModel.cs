@@ -1,11 +1,14 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using VkNet;
@@ -17,9 +20,9 @@ public class VkBookmarksViewModel : ViewModelBase
 {
     public VkBookmarksViewModel()
     {
-        LoadMoreCommand = new(LoadMore);
+        LoadMoreCommand = new(LoadItems);
         InitVkApi();
-        LoadBookmarks();
+        //LoadBookmarks();
     }
 
     VkApi api;
@@ -27,7 +30,7 @@ public class VkBookmarksViewModel : ViewModelBase
 
     public ObservableCollection<FaveGetObjectViewModel> Items { get; private set; } = new();
 
-    public RelayCommand LoadMoreCommand { get; private set; }
+    public AsyncRelayCommand LoadMoreCommand { get; private set; }
 
     private async void InitVkApi()
     {
@@ -58,7 +61,7 @@ public class VkBookmarksViewModel : ViewModelBase
     }
 
 
-    private async void LoadBookmarks()
+    private async Task LoadItems()
     {
         try
         {
@@ -84,36 +87,32 @@ public class VkBookmarksViewModel : ViewModelBase
             };
 
             var json = await api.InvokeAsync("fave.get", parameters);
-            var response = JsonConvert.DeserializeAnonymousType(json, scheme);
 
-            foreach (var item in response.Response.Items)
-                Items.Add(new FaveGetObjectViewModel(
-                    api,
-                    item,
-                    response.Response.Profiles,
-                    response.Response.Groups));
+            var queue = DispatcherQueue.GetForCurrentThread();
 
-            offset += response.Response.Items.Count;
+            await Task.Run(() =>
+            {
+                var response = JsonConvert.DeserializeAnonymousType(json, scheme);
+
+                foreach (var item in response.Response.Items)
+                {
+                    var vm = new FaveGetObjectViewModel(
+                        api, item, response.Response.Profiles, response.Response.Groups);
+
+                    queue.TryEnqueue(() =>
+                    {
+                        Items.Add(vm);
+                    });
+                }
+
+                offset += response.Response.Items.Count;
+            });
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
-
-            var dialog = new ContentDialog()
-            {
-                XamlRoot = Desktop.App.XamlRoot,
-                Title = "Ошибка :(",
-                Content = ex.Message,
-                PrimaryButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-            await dialog.ShowAsync();
+            await Desktop.App.ShowExceptionDialog(ex);
         }
     }
-
-    private void LoadMore() => LoadBookmarks();
-
 
     public class FaveGetObjectButBetter : FaveGetObject
     {

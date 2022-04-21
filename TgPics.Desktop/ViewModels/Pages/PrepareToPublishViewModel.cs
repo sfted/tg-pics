@@ -78,9 +78,18 @@ public class PrepareToPublishViewModel : ViewModelBase
                 MediaIds = response.Items.Select(f => f.Id).ToList()
             };
 
-            await client.AddPostAsync(request);
-
-            Post.SetTagToOriginalPost();
+            try
+            {
+                var result = await client.AddPostAsync(request);
+                Post.SetTagToOriginalPost();
+                await App.ShowSuccessfulDialog($"Пост успешно добавлен в очередь!\n" +
+                    $"Дата и время публикации: {result.PublicationDateTime}\n" +
+                    $"Id: {result.Id}");
+            }
+            catch (Exception ex)
+            {
+                await App.ShowExceptionDialog(ex);
+            }
         }
     }
 }

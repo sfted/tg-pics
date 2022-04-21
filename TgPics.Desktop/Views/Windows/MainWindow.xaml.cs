@@ -19,6 +19,15 @@ public sealed partial class MainWindow : Window
         currentPageTitleTextBlock.Text = $"🧭 {info.Item2}";
     }
 
+    public static (Type, string) PageTagToTypeAndTitle(string tag) =>
+        tag switch
+        {
+            "settings" => (typeof(SettingsPage), "Настройки"),
+            "vk_bookmarks" => (typeof(VkBookmarksPage), "ВКонтакте: Закладки"),
+            "prepare_to_publish" => (typeof(PrepareToPublishPage), "Подготовка публикации"),
+            _ => (typeof(PageNotFound), "404: Страница не найдена"),
+        };
+
     private void OnGridLoaded(object sender, RoutedEventArgs e)
     {
         App.XamlRoot = (sender as Grid).XamlRoot;
@@ -33,13 +42,4 @@ public sealed partial class MainWindow : Window
         if (args.InvokedItemContainer != null)
             Navigate(args.InvokedItemContainer.Tag?.ToString());
     }
-
-    private static (Type, string) PageTagToTypeAndTitle(string tag) =>
-        tag switch
-        {
-            "settings" => (typeof(SettingsPage), "Настройки"),
-            "vk_bookmarks" => (typeof(VkBookmarksPage), "ВКонтакте: Закладки"),
-            "prepare_to_publish" => (typeof(PrepareToPublishPage), "Подготовка публикации"),
-            _ => (typeof(PageNotFound), "404: Страница не найдена"),
-        };
 }

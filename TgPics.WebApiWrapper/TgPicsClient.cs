@@ -34,15 +34,15 @@ public class TgPicsClient
         this.token = token;
     }
 
-    private string token;
+    private string token = string.Empty;
     private readonly RestClient restClient;
 
 
     public async Task<UsersAuthResponse> AuthAsync(
         UsersAuthRequest parameters) => await AuthAndSaveTokenAsync(parameters);
 
-    public async Task AddPostAsync(PostsAddRequest parameters) =>
-        await Post(parameters, "api/posts/add", token);
+    public async Task<PostModel> AddPostAsync(PostsAddRequest parameters) =>
+        await Post<PostsAddRequest, PostModel>(parameters, "api/posts/add", token);
 
     public async Task RemovePostAsync(IdRequest parameters) =>
         await Post(parameters, "api/posts/remove", token);
@@ -65,7 +65,8 @@ public class TgPicsClient
             request.AddFile($"files", path);
         //[{Path.GetFileName(path)}]
 
-        return await restClient.PostAsync<ListResponse<MediaFileInfo>>(request);
+        var response = await restClient.PostAsync(request);
+        return ProceedResponse<ListResponse<MediaFileInfo>>(response);
     }
 
     private async Task<UsersAuthResponse> AuthAndSaveTokenAsync(
@@ -90,7 +91,8 @@ public class TgPicsClient
         if (token != "")
             request.AddHeader("Authorization", $"Bearer {token}");
 
-        await restClient.PostAsync<T>(request);
+        var response = await restClient.PostAsync(request);
+        ProceedResponse<T>(response);
     }
 
     protected async Task<T2> Post<T1, T2>(
@@ -104,7 +106,8 @@ public class TgPicsClient
         if (token != "")
             request.AddHeader("Authorization", $"Bearer {token}");
 
-        return await restClient.PostAsync<T2>(request);
+        var response = await restClient.PostAsync(request);
+        return ProceedResponse<T2>(response);
     }
 
     protected async Task<T> Get<T>(string route, string token = "")
@@ -115,6 +118,35 @@ public class TgPicsClient
         if (token != "")
             request.AddHeader("Authorization", $"Bearer {token}");
 
-        return await restClient.GetAsync<T>(request);
+        var response = await restClient.GetAsync(request);
+        return ProceedResponse<T>(response);
+    }
+
+    protected T ProceedResponse<T>(RestResponse response)
+    {
+        var code = (int)response.StatusCode;
+
+        switch (code)
+        {
+            case int s when (s >= 200 && s <= 200):
+                var deserialized = restClient.Deserialize<T>(response).Data;
+
+                if (deserialized != null)
+                    return deserialized;
+                else
+                    throw new Exception("Не удалось десериализовать ответ.");
+
+            case 400:
+                var error = restClient.Deserialize<MessageResponse>(response).Data;
+                if (error != null)
+                    throw new Exception(error.Message);
+                else
+                    throw new Exception($"Сервер вернул ошибку: {response.StatusCode}\n" +
+                        $"{response.Content}");
+
+            default:
+                throw new Exception($"Сервер вернул ошибку: {response.StatusCode}\n" +
+                    $"{response.Content}");
+        }
     }
 }

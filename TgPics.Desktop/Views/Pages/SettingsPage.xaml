@@ -243,7 +243,7 @@
                 </Grid>
             </Expander>
 
-            <Expander
+            <!--<Expander
                 Padding="16"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
@@ -287,7 +287,7 @@
                             TextWrapping="WrapWholeWords" />
                     </Grid>
                 </Expander.Header>
-            </Expander>
+            </Expander>-->
         </StackPanel>
     </Grid>
 </Page>

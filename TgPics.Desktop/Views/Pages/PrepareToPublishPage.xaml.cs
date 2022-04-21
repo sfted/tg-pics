@@ -3,11 +3,16 @@
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System.Linq;
+using System.Windows.Input;
+using TgPics.Desktop.Helpers.Interfaces;
 using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.ViewModels;
 using TgPics.Desktop.ViewModels.Pages;
 
-public sealed partial class PrepareToPublishPage : Page, IViewModel<PrepareToPublishViewModel>
+public sealed partial class PrepareToPublishPage : Page,
+    IViewModel<PrepareToPublishViewModel>,
+    IExternalNavigation,
+    IActionable
 {
     public PrepareToPublishPage()
     {
@@ -16,12 +21,19 @@ public sealed partial class PrepareToPublishPage : Page, IViewModel<PrepareToPub
 
     public PrepareToPublishViewModel ViewModel { get; set; }
 
+    public string ActionName => "Добавить в очередь";
+    public ICommand Action => ViewModel.PublishCommand;
+
+    public void OnExternalNavigatedTo(object parameter)
+    {
+        if (parameter is PrepareToPublishPostViewModel post)
+            ViewModel = new(post);
+    }
+
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-
-        if (e.Parameter is PrepareToPublishPostViewModel post)
-            ViewModel = new(post);
+        OnExternalNavigatedTo(e.Parameter);
     }
 
     // бинд на SelectedItems не работает...

@@ -5,6 +5,9 @@ using TgPics.Core.Entities;
 
 public class PostModel
 {
+    [JsonConstructor]
+    public PostModel() { }
+
     public PostModel(string host, Post post)
     {
         Id = post.Id;
@@ -26,14 +29,14 @@ public class PostModel
     public int Id { get; set; }
 
     [JsonPropertyName("source_link")]
-    public string SourceLink { get; set; }
+    public string SourceLink { get; set; } = string.Empty;
 
     [JsonPropertyName("source_platform")]
-    public string SourcePlatfrom { get; set; }
+    public string SourcePlatfrom { get; set; } = string.Empty;
 
     [JsonPropertyName("source_title")]
-    public string SourceTitle { get; set; }
-    
+    public string SourceTitle { get; set; } = string.Empty;
+
     [JsonPropertyName("invite_link")]
     public string? InviteLink { get; set; }
 
@@ -56,5 +59,5 @@ public class PostModel
     public string? PublicationError { get; set; }
 
     [JsonPropertyName("media")]
-    public IEnumerable<MediaFileInfo> Media { get; set; }
+    public IEnumerable<MediaFileInfo> Media { get; set; } = new List<MediaFileInfo>();
 }

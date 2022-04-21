@@ -5,4 +5,7 @@
 
     <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <local:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverseConverter" />
+
+    <local:NavigationToAlighmentConverter x:Key="NavigationToAlighmentConverter" />
+    <local:NavigationToMarginConverter x:Key="NavigationToMarginConverter" />
 </ResourceDictionary>

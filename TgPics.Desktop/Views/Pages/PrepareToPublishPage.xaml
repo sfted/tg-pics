@@ -6,11 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:TgPics.Desktop.ViewModels.Pages"
     d:DataContext="{d:DesignInstance Type=pages:PrepareToPublishViewModel}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="Transparent"
     mc:Ignorable="d">
 
     <StackPanel Spacing="8">
-
         <TextBlock
             FontSize="14"
             Text="Фотографии:" />
@@ -166,9 +165,9 @@
                 TextWrapping="Wrap" />
         </StackPanel>
 
-        <Button
+        <!--<Button
             HorizontalAlignment="Right"
             Command="{x:Bind ViewModel.PublishCommand}"
-            Content="Отправить в очередь" />
+            Content="Отправить в очередь" />-->
     </StackPanel>
 </Page>
