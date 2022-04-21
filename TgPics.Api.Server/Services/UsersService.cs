@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Services;
+﻿namespace TgPics.Api.Server.Services;
 
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

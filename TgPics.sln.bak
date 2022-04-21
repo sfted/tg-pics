@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Desktop", "TgPics.De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Core", "TgPics.Core\TgPics.Core.csproj", "{BB1B59EF-875D-4E29-A9C4-847267670B7D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Api.Server", "TgPics.Api.Server\TgPics.Api.Server.csproj", "{A8D06D39-9448-4116-B80F-4C1C88383CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Api.Server", "TgPics.Api.Client\TgPics.Api.Client.csproj", "{A8D06D39-9448-4116-B80F-4C1C88383CDE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgPics.Api.Client", "TgPics.Api.Client\TgPics.Api.Client.csproj", "{31B4FDF0-3BBA-44A6-821F-725A82539C41}"
 EndProject

@@ -13,7 +13,7 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Model.RequestParams;
 
-namespace TgPics.WebApi.Services;
+namespace TgPics.Api.Server.Services;
 
 // TODO: ПЕРЕПИСАТЬ И ОТРЕФАКТОРИТЬ ВСЁ НАХУЙ
 

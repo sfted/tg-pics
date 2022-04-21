@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Helpers;
+﻿namespace TgPics.Api.Server.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

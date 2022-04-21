@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TgPics.Core.Entities;
 
-namespace TgPics.WebApi.Services;
+namespace TgPics.Api.Server.Services;
 
 public class DatabaseService : DbContext
 {

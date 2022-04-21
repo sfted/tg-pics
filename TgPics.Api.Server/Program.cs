@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using TgPics.WebApi;
-using TgPics.WebApi.Helpers;
-using TgPics.WebApi.Services;
-
+using TgPics.Api.Server;
+using TgPics.Api.Server.Helpers;
+using TgPics.Api.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

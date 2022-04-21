@@ -1,15 +1,15 @@
-﻿namespace TgPics.WebApiWrapper;
+﻿namespace TgPics.Api.Client;
 
 using HttpTracer;
 using RestSharp;
 using TgPics.Core.Models;
 using TgPics.Core.Models.Requests;
 using TgPics.Core.Models.Responses;
-using TgPics.WebApiWrapper.Helpers;
+using TgPics.Api.Client.Helpers;
 
-public class TgPicsClient
+public class TgPicsApi
 {
-    public TgPicsClient(string host, bool secure = true)
+    public TgPicsApi(string host, bool secure = true)
     {
         var options = new RestClientOptions(host)
         {
@@ -28,7 +28,7 @@ public class TgPicsClient
         restClient = new RestClient(options);
     }
 
-    public TgPicsClient(
+    public TgPicsApi(
         string host, string token, bool secure = true) : this(host, secure)
     {
         this.token = token;

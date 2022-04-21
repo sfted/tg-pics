@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApiWrapper.Helpers;
+﻿namespace TgPics.Api.Client.Helpers;
 
 using HttpTracer.Logger;
 using System.Diagnostics;

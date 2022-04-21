@@ -6,7 +6,7 @@ using System.Net;
 using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
-using TgPics.WebApiWrapper;
+using TgPics.Api.Client;
 
 namespace TgPics.Desktop.ViewModels.Pages;
 
@@ -62,7 +62,7 @@ public class PrepareToPublishViewModel : ViewModelBase
                 );
             }
 
-            var client = new TgPicsClient(
+            var client = new TgPicsApi(
                 Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_HOST),
                 Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_TOKEN),
                 secure: false);

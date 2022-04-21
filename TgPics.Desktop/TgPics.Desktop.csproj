@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -89,6 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgPics.Core\TgPics.Core.csproj" />
-    <ProjectReference Include="..\TgPics.WebApiWrapper\TgPics.WebApiWrapper.csproj" />
+    <ProjectReference Include="..\TgPics.APi.Client\TgPics.Api.Client.csproj" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@ using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Views.Pages;
-using TgPics.WebApiWrapper;
+using TgPics.Api.Client;
 using VkNet;
 using VkNet.Model;
 
@@ -137,7 +137,7 @@ public class SettingsViewModel : ViewModelBase
 
     private async void ProceedLogin(LoginPage page)
     {
-        var client = new TgPicsClient(TgPicsHost);
+        var client = new TgPicsApi(TgPicsHost);
         var request = new UsersAuthRequest
         {
             Username = page.ViewModel.Username,

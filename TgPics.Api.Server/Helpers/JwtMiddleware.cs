@@ -1,9 +1,9 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using TgPics.WebApi.Services;
+using TgPics.Api.Server.Services;
 
-namespace TgPics.WebApi.Helpers;
+namespace TgPics.Api.Server.Helpers;
 
 public class JwtMiddleware
 {

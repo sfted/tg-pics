@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Helpers;
+﻿namespace TgPics.Api.Server.Helpers;
 
 public static class Extensions
 {

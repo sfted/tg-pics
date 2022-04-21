@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TgPics.WebApi.Services;
+using TgPics.Api.Server.Services;
 
-namespace TgPics.WebApi;
+namespace TgPics.Api.Server;
 
 public static class Extensions
 {

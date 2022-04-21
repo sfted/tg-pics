@@ -1,4 +1,4 @@
-﻿namespace TgPics.WebApi.Services;
+﻿namespace TgPics.Api.Server.Services;
 
 public interface ISettingsService
 {
