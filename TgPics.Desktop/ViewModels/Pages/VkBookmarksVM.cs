@@ -1,5 +1,6 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using DesktopKit.Services;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
@@ -7,7 +8,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
@@ -16,15 +16,23 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Utils;
 
-public class VkBookmarksViewModel : ViewModelBase
+public interface IVkBookmarksVM
 {
-    public VkBookmarksViewModel()
+    ObservableCollection<FaveGetObjectViewModel> Items { get; }
+    AsyncRelayCommand LoadMoreCommand { get; }
+}
+
+public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
+{
+    public VkBookmarksVM(INavigationService navigationService)
     {
+        this.navigationService = navigationService;
         LoadMoreCommand = new(LoadItems);
         InitVkApi();
         //LoadBookmarks();
     }
 
+    readonly INavigationService navigationService;
     VkApi api;
     int offset = 0;
 
@@ -40,23 +48,12 @@ public class VkBookmarksViewModel : ViewModelBase
             api.Authorize(new ApiAuthParams
             {
                 AccessToken = Settings.Instance.Get<string>(
-                    SettingsViewModel.VK_TOKEN),
+                    SettingsVM.VK_TOKEN),
             });
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
-
-            var dialog = new ContentDialog()
-            {
-                XamlRoot = Desktop.App.XamlRoot,
-                Title = "Ошибка :(",
-                Content = ex.Message,
-                PrimaryButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-            await dialog.ShowAsync();
+            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
         }
     }
 
@@ -110,7 +107,7 @@ public class VkBookmarksViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await Desktop.App.ShowExceptionDialog(ex);
+            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
         }
     }
 

@@ -21,11 +21,12 @@
     <None Remove="Assets\Icons\tg_icon.png" />
     <None Remove="Utils\Converters\Converters.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
-    <None Remove="Views\Pages\PageNotFound.xaml" />
+    <None Remove="Views\Pages\NotFoundPage.xaml" />
     <None Remove="Views\Pages\PrepareToPublishPage.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
     <None Remove="Views\Pages\VkBookmarksPage.xaml" />
     <None Remove="Views\Pages\VkLoginPage.xaml" />
+    <None Remove="Views\UserControls\ExceptionUserControl.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +62,12 @@
     <None Update="Assets\Fonts\material_icons.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\NotFoundPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\ExceptionUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Pages\PrepareToPublishPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -68,9 +75,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\Pages\VkLoginPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Pages\PageNotFound.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Utils\Converters\Converters.xaml">
@@ -85,9 +89,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\desktop-kit\DesktopKit.csproj" />
     <ProjectReference Include="..\TgPics.Core\TgPics.Core.csproj" />
     <ProjectReference Include="..\TgPics.APi.Client\TgPics.Api.Client.csproj" />
   </ItemGroup>

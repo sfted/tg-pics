@@ -1,10 +1,10 @@
 ﻿namespace TgPics.Desktop.ViewModels;
 
+using global::Windows.System;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using TgPics.Core.Models;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.MVVM.Interfaces;
@@ -12,14 +12,14 @@ using TgPics.Desktop.Utils.Extensions;
 using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
-using static TgPics.Desktop.ViewModels.Pages.VkBookmarksViewModel;
+using static TgPics.Desktop.ViewModels.Pages.VkBookmarksVM;
 
 public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBetter>
 {
     public FaveGetObjectViewModel(
         VkApi api,
         FaveGetObjectButBetter model,
-        List<User> profiles,
+        List<VkNet.Model.User> profiles,
         List<Group> groups)
     {
         this.api = api;
@@ -61,7 +61,7 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
                     .Select(p => new PhotoViewModel(p.Instance as Photo))
                     .ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
@@ -93,19 +93,19 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
     public RelayCommand PrepareToPublishCommand { get; private set; }
 
     private void OpenInBrowser() =>
-        Windows.System.Launcher.LaunchUriAsync(Url);
+        Launcher.LaunchUriAsync(Url);
 
-    private async void PrepareToPublish() =>
-        await Desktop.App.ShowDialog(
-            "prepare_to_publish",
-            new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
-            {
-                SourceLink = Url,
-                SourceTitle = $"{GroupName}",
-                Photos = Photos.Select(p => new Core.Models.PrepareToPublishPhoto
-                {
-                    OriginalUrl = p.OriginalUri,
-                    Preview32Url = p.Model.GetSmallest32AspectRatioImageUri()
-                }).ToList()
-            }));
+    private async void PrepareToPublish() => throw new NotImplementedException();
+        //await Desktop.App.ShowDialog(
+        //    "prepare_to_publish",
+        //    new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
+        //    {
+        //        SourceLink = Url,
+        //        SourceTitle = $"{GroupName}",
+        //        Photos = Photos.Select(p => new PrepareToPublishPhoto
+        //        {
+        //            OriginalUrl = p.OriginalUri,
+        //            Preview32Url = p.Model.GetSmallest32AspectRatioImageUri()
+        //        }).ToList()
+        //    }));
 }

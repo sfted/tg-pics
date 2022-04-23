@@ -1,24 +1,43 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TgPics.Core.Models;
+using TgPics.Api.Client;
 using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Views.Pages;
-using TgPics.Api.Client;
 using VkNet;
 using VkNet.Model;
 
+public interface ISettingsVM
+{
+    RelayCommand LogInTgPicsCommand { get; }
+    RelayCommand LogInVkCommand { get; }
+    RelayCommand LogOutOfVkCommand { get; }
+    RelayCommand<LoginPage> ProceedLoginCommand { get; }
+    RelayCommand SaveHostCommand { get; }
+    RelayCommand SavePostingTagCommand { get; }
+    FaveTag SelectedPostingTag { get; set; }
+    string TgPicsHost { get; set; }
+    bool TgPicsIsLoggedIn { get; set; }
+    string TgPicsUsername { get; set; }
+    bool VkIsLoggedIn { get; set; }
+    List<FaveTag> VkTags { get; set; }
+    string VkUsername { get; set; }
+}
+
 // TODO: вынести часть логики в сервис.
 // да даже не один сервис тут нужен.. 
-public class SettingsViewModel : ViewModelBase
+public class SettingsVM : ViewModelBase, ISettingsVM
 {
-    public SettingsViewModel()
+    public SettingsVM(INavigationService navigationService)
     {
+        this.navigationService = navigationService;
+
         SaveHostCommand = new(SaveHost);
         LogInTgPicsCommand = new(LogInTgPics);
         ProceedLoginCommand = new(ProceedLogin);
@@ -47,6 +66,7 @@ public class SettingsViewModel : ViewModelBase
     public const string POSTING_TAG = "posting_tag";
 
 
+    readonly INavigationService navigationService;
     readonly Settings settings = Settings.Instance;
     VkApi vkApi;
 
@@ -122,7 +142,6 @@ public class SettingsViewModel : ViewModelBase
         var page = new LoginPage();
         var dialog = new ContentDialog()
         {
-            XamlRoot = Desktop.App.XamlRoot,
             Title = "Вход в аккаунт",
             Content = page,
             PrimaryButtonText = "Войти",
@@ -131,13 +150,13 @@ public class SettingsViewModel : ViewModelBase
             CloseButtonText = "Отмена",
             PrimaryButtonCommandParameter = page
         };
-
-        await dialog.ShowAsync();
+        
+        await navigationService.ShowDialogAsync(dialog);
     }
 
     private async void ProceedLogin(LoginPage page)
     {
-        var client = new TgPicsApi(TgPicsHost);
+        var client = new TgPicsApi(TgPicsHost, secure: false);
         var request = new UsersAuthRequest
         {
             Username = page.ViewModel.Username,
@@ -153,17 +172,8 @@ public class SettingsViewModel : ViewModelBase
             NotifyPropertyChanged(TgPicsUsername);
         }
         catch (Exception ex)
-        {
-            var dialog = new ContentDialog()
-            {
-                XamlRoot = Desktop.App.XamlRoot,
-                Title = "Ошибка :(",
-                Content = ex.Message,
-                PrimaryButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-            await dialog.ShowAsync();
+        {            
+            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
         }
     }
 
@@ -172,12 +182,11 @@ public class SettingsViewModel : ViewModelBase
         var page = new VkLoginPage();
         var dialog = new ContentDialog()
         {
-            XamlRoot = Desktop.App.XamlRoot,
             Title = "Вход в аккаунт ВК",
             Content = page,
             CloseButtonText = "Отмена"
         };
-
+        
         page.ViewModelLoaded += () =>
         {
             page.ViewModel.LoginCompleted += () =>
@@ -188,7 +197,7 @@ public class SettingsViewModel : ViewModelBase
             };
         };
 
-        await dialog.ShowAsync();
+        await navigationService.ShowDialogAsync(dialog);
     }
 
     private void LogOutOfVk()
@@ -221,17 +230,7 @@ public class SettingsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            // TODO: надо как-то избавиться от повторяющегося кода...
-            var dialog = new ContentDialog()
-            {
-                XamlRoot = Desktop.App.XamlRoot,
-                Title = "Ошибка :(",
-                Content = ex.Message,
-                PrimaryButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-            await dialog.ShowAsync();
+            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
         }
     }
 }

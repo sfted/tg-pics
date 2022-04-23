@@ -35,7 +35,7 @@ public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
         var webView2 = sender as WebView2;
         await webView2.EnsureCoreWebView2Async();
 
-        if (string.IsNullOrEmpty(Settings.Instance.Get<string>(SettingsViewModel.VK_TOKEN)))
+        if (string.IsNullOrEmpty(Settings.Instance.Get<string>(SettingsVM.VK_TOKEN)))
             webView2.CoreWebView2.CookieManager.DeleteAllCookies();
 
         ViewModel = new();

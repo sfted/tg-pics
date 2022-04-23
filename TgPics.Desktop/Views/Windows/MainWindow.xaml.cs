@@ -1,45 +1,54 @@
 ﻿namespace TgPics.Desktop.Views.Windows;
 
+using DesktopKit.MVVM.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Animation;
 using System;
-using TgPics.Desktop.Views.Pages;
+using TgPics.Desktop.ViewModels.Windows;
 
-public sealed partial class MainWindow : Window
+internal sealed partial class MainWindow : Window, IViewModel<IMainWindowVM>
 {
     public MainWindow()
     {
+        ViewModel = App.Current.Services.GetService<IMainWindowVM>();
+        Title = "tg-pics";
         InitializeComponent();
     }
 
-    public void Navigate(string pageId, object parameter = null)
-    {
-        var info = PageTagToTypeAndTitle(pageId);
-        frame.Navigate(info.Item1, parameter);
-        currentPageTitleTextBlock.Text = $"🧭 {info.Item2}";
-    }
+    private IMainWindowVM viewModel;
 
-    public static (Type, string) PageTagToTypeAndTitle(string tag) =>
-        tag switch
+    public IMainWindowVM ViewModel
+    {
+        get => viewModel;
+        set
         {
-            "settings" => (typeof(SettingsPage), "Настройки"),
-            "vk_bookmarks" => (typeof(VkBookmarksPage), "ВКонтакте: Закладки"),
-            "prepare_to_publish" => (typeof(PrepareToPublishPage), "Подготовка публикации"),
-            _ => (typeof(PageNotFound), "404: Страница не найдена"),
-        };
+            viewModel = value;
+            viewModel.NavigationService.Navigated += OnNavigated;
+        }
+    }
 
     private void OnGridLoaded(object sender, RoutedEventArgs e)
     {
-        App.XamlRoot = (sender as Grid).XamlRoot;
-
+        ViewModel.NavigationService.XamlRoot = (sender as Grid).XamlRoot;
         ExtendsContentIntoTitleBar = true;
-        SetTitleBar(AppTitleBar);
+        SetTitleBar(titleBar);
     }
 
-    private void OnItemInvoked(
-        NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    private void OnNavigated(Type page, object parameter)
+    {
+        frame.Navigate(page, parameter, new DrillInNavigationTransitionInfo());
+    }
+
+    private void OnMenuToggleButtonClick(object sender, RoutedEventArgs e)
+    {
+        navigationView.IsPaneOpen = !navigationView.IsPaneOpen;
+    }
+
+    private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         if (args.InvokedItemContainer != null)
-            Navigate(args.InvokedItemContainer.Tag?.ToString());
+            ViewModel.NavigationService.NavigateTo(args.InvokedItemContainer.Tag?.ToString());
     }
 }

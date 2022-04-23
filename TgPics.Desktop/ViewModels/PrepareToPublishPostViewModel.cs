@@ -35,7 +35,7 @@ public class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
         var postId = Convert.ToInt64(
             Regex.Match(Model.SourceLink.ToString(), @"(?<=_)(.*)").Value);
 
-        var tagId = Settings.Instance.Get<long>(SettingsViewModel.POSTING_TAG);
+        var tagId = Settings.Instance.Get<long>(SettingsVM.POSTING_TAG);
 
         api.Fave.SetTags(new FaveSetTagsParams
         {

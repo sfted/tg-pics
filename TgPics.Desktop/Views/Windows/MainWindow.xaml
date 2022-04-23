@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:kit="using:DesktopKit.Values"
     xmlns:local="using:TgPics.Desktop.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -13,55 +14,96 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid
-            x:Name="AppTitleBar"
-            Height="28"
-            Margin="0,0,120,0"
-            Background="{ThemeResource NavigationViewPaneBackground}">
+        <StackPanel
+            Background="{ThemeResource NavigationViewPaneBackground}"
+            Orientation="Horizontal">
+            <Button
+                x:Name="menuToggleButton"
+                Width="48"
+                Height="28"
+                Padding="0,2,0,0"
+                Background="{ThemeResource NavigationViewPaneBackground}"
+                BorderThickness="0"
+                Click="OnMenuToggleButtonClick"
+                Content="{x:Bind kit:MaterialIcons.MENU}"
+                CornerRadius="0"
+                FontFamily="{StaticResource IconsFont}"
+                FontSize="20" />
+
+            <Button
+                Width="28"
+                Height="28"
+                Padding="0"
+                Background="{ThemeResource NavigationViewPaneBackground}"
+                BorderThickness="0"
+                Content="{x:Bind kit:MaterialIcons.ARROW_BACK_IOS}"
+                CornerRadius="0"
+                FontFamily="{StaticResource IconsFont}"
+                FontSize="14" />
+
+            <Button
+                Width="28"
+                Height="28"
+                Padding="0"
+                Background="{ThemeResource NavigationViewPaneBackground}"
+                BorderThickness="0"
+                Content="{x:Bind kit:MaterialIcons.ARROW_FORWARD_IOS}"
+                CornerRadius="0"
+                FontFamily="{StaticResource IconsFont}"
+                FontSize="14" />
 
             <TextBlock
                 Margin="10,2,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
+                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                 FontSize="12"
                 FontWeight="Bold"
                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                 Text="tg-pics" />
 
-            <TextBlock
-                x:Name="currentPageTitleTextBlock"
-                Margin="{Binding ElementName=navigation,
-                                 Path=IsPaneOpen,
-                                 Converter={StaticResource NavigationToMarginConverter}}"
-                HorizontalAlignment="{Binding ElementName=navigation,
-                                              Path=IsPaneOpen,
-                                              Converter={StaticResource NavigationToAlighmentConverter}}"
-                VerticalAlignment="Center"
-                FontSize="12"
-                FontWeight="Bold" />
+            <StackPanel.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Dark">
+                            <SolidColorBrush
+                                x:Key="ButtonBackground"
+                                Color="#181818" />
+                            <SolidColorBrush
+                                x:Key="ButtonBackgroundPointerOver"
+                                Color="#181818" />
+                            <SolidColorBrush
+                                x:Key="ButtonBackgroundPressed"
+                                Color="#181818" />
 
-            <!--<TextBlock
-                Margin="0,2,8,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                FontSize="12"
-                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                Text="microsoft plz fix ➡️" />-->
-        </Grid>
+                            <SolidColorBrush
+                                x:Key="ButtonForeground"
+                                Color="#888" />
+                            <SolidColorBrush
+                                x:Key="ButtonForegroundPointerOver"
+                                Color="#fff" />
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
+                </ResourceDictionary>
+            </StackPanel.Resources>
+        </StackPanel>
+
+        <Grid
+            x:Name="titleBar"
+            Height="28"
+            Margin="190,0,0,0"
+            Background="{ThemeResource NavigationViewPaneBackground}" />
 
         <NavigationView
-            x:Name="navigation"
+            x:Name="navigationView"
             Grid.Row="1"
             Background="{ThemeResource NavigationViewPaneBackground}"
             FontFamily="{StaticResource ContentControlThemeFontFamily}"
             IsBackButtonVisible="Collapsed"
-            IsPaneOpen="True"
-            IsPaneToggleButtonVisible="True"
+            IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
             ItemInvoked="OnItemInvoked"
-            OpenPaneLength="250"
-            PaneDisplayMode="Left"
-            PaneTitle="😳😳😳">
+            OpenPaneLength="250">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Главная">
                     <NavigationViewItem.Icon>
@@ -167,7 +209,7 @@
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 
-            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Border Background="#111">
                 <Frame x:Name="frame" />
             </Border>
 

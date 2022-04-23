@@ -63,8 +63,8 @@ public class PrepareToPublishViewModel : ViewModelBase
             }
 
             var client = new TgPicsApi(
-                Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_HOST),
-                Settings.Instance.Get<string>(SettingsViewModel.TG_PICS_TOKEN),
+                Settings.Instance.Get<string>(SettingsVM.TG_PICS_HOST),
+                Settings.Instance.Get<string>(SettingsVM.TG_PICS_TOKEN),
                 secure: false);
 
             var response = await client.UploadFilesAsync(paths);
@@ -78,18 +78,18 @@ public class PrepareToPublishViewModel : ViewModelBase
                 MediaIds = response.Items.Select(f => f.Id).ToList()
             };
 
-            try
-            {
-                var result = await client.AddPostAsync(request);
-                Post.SetTagToOriginalPost();
-                await App.ShowSuccessfulDialog($"Пост успешно добавлен в очередь!\n" +
-                    $"Дата и время публикации: {result.PublicationDateTime}\n" +
-                    $"Id: {result.Id}");
-            }
-            catch (Exception ex)
-            {
-                await App.ShowExceptionDialog(ex);
-            }
+            //try
+            //{
+            //    var result = await client.AddPostAsync(request);
+            //    Post.SetTagToOriginalPost();
+            //    await App.ShowSuccessfulDialog($"Пост успешно добавлен в очередь!\n" +
+            //        $"Дата и время публикации: {result.PublicationDateTime}\n" +
+            //        $"Id: {result.Id}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    await App.ShowExceptionDialog(ex);
+            //}
         }
     }
 }

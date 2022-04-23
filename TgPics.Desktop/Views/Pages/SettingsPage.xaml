@@ -5,11 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pages="using:TgPics.Desktop.ViewModels.Pages"
-    d:DataContext="{d:DesignInstance Type=pages:SettingsViewModel}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    d:DataContext="{d:DesignInstance Type=pages:SettingsVM}"
     mc:Ignorable="d">
 
-    <Grid RowSpacing="16">
+    <Grid
+        Padding="8"
+        RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

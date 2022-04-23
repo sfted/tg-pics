@@ -1,7 +1,8 @@
 ﻿<Application
     x:Class="TgPics.Desktop.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    RequestedTheme="Dark">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -32,7 +33,7 @@
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush
                         x:Key="NavigationViewPaneBackground"
-                        Color="#161616" />
+                        Color="#181818" />
                     <SolidColorBrush
                         x:Key="CardBackground"
                         Color="#272727" />
@@ -41,10 +42,10 @@
                         Color="#1c1c1c" />
                     <SolidColorBrush
                         x:Key="WindowCaptionBackground"
-                        Color="#161616" />
+                        Color="#181818" />
                     <SolidColorBrush
                         x:Key="WindowCaptionBackgroundDisabled"
-                        Color="#161616" />
+                        Color="#181818" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
