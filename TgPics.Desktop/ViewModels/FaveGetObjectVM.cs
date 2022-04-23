@@ -1,6 +1,9 @@
 ﻿namespace TgPics.Desktop.ViewModels;
 
+using DesktopKit.Services;
 using global::Windows.System;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,19 +12,39 @@ using TgPics.Core.Models;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Utils.Extensions;
+using TgPics.Desktop.Views.Pages;
 using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
 using static TgPics.Desktop.ViewModels.Pages.VkBookmarksVM;
 
-public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBetter>
+public interface IFaveGetObjectVM
 {
-    public FaveGetObjectViewModel(
+    string AuthorName { get; set; }
+    DateTime Date { get; set; }
+    string GroupName { get; set; }
+    Uri GroupProfilePic { get; set; }
+    bool HasText { get; set; }
+    bool IsSigned { get; set; }
+    FaveGetObjectButBetter Model { get; set; }
+    RelayCommand OpenInBrowserCommand { get; }
+    List<PhotoViewModel> Photos { get; set; }
+    RelayCommand PrepareToPublishCommand { get; }
+    List<FaveTag> Tags { get; set; }
+    string Text { get; set; }
+    Uri Url { get; set; }
+}
+
+public class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IFaveGetObjectVM
+{
+    public FaveGetObjectVM(
+        INavigationService navigationService,
         VkApi api,
         FaveGetObjectButBetter model,
         List<VkNet.Model.User> profiles,
         List<Group> groups)
     {
+        this.navigationService = navigationService;
         this.api = api;
         Model = model;
 
@@ -75,7 +98,8 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
         }
     }
 
-    private readonly VkApi api;
+    readonly INavigationService navigationService;
+    readonly VkApi api;
 
     public FaveGetObjectButBetter Model { get; set; }
     public string GroupName { get; set; }
@@ -92,20 +116,46 @@ public class FaveGetObjectViewModel : ViewModelBase, IModel<FaveGetObjectButBett
     public RelayCommand OpenInBrowserCommand { get; private set; }
     public RelayCommand PrepareToPublishCommand { get; private set; }
 
-    private void OpenInBrowser() =>
-        Launcher.LaunchUriAsync(Url);
+    private void OpenInBrowser() => Launcher.LaunchUriAsync(Url);
 
-    private async void PrepareToPublish() => throw new NotImplementedException();
-        //await Desktop.App.ShowDialog(
-        //    "prepare_to_publish",
-        //    new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
-        //    {
-        //        SourceLink = Url,
-        //        SourceTitle = $"{GroupName}",
-        //        Photos = Photos.Select(p => new PrepareToPublishPhoto
-        //        {
-        //            OriginalUrl = p.OriginalUri,
-        //            Preview32Url = p.Model.GetSmallest32AspectRatioImageUri()
-        //        }).ToList()
-        //    }));
+    // TODO: переписать
+    private async void PrepareToPublish()
+    {
+        var vm = new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
+        {
+            SourceLink = Url,
+            SourceTitle = $"{GroupName}",
+            Photos = Photos.Select(p => new PrepareToPublishPhoto
+            {
+                OriginalUrl = p.OriginalUri,
+                Preview32Url = p.Model.GetSmallest32AspectRatioImageUri()
+            }).ToList()
+        });
+
+        var page = new PrepareToPublishPage
+        {
+            ViewModel = new(navigationService, vm)
+        };
+
+        var scroll = new ScrollViewer
+        {
+            Content = page,
+            Padding = new Thickness(0, 0, 4, 0),
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+        };
+
+        var dialog = new ContentDialog()
+        {
+            Title = "Подготовка к публикации",
+            Content = scroll,
+            CloseButtonText = "Отмена",
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = page.ActionName,
+            PrimaryButtonCommand = page.Action,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        await navigationService.ShowDialogAsync(dialog);
+    }
 }

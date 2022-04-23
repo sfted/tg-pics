@@ -16,7 +16,7 @@
 
         <ListView
             Grid.Row="0"
-            Padding="16"
+            Padding="0,16"
             FontFamily="{StaticResource ContentControlThemeFontFamily}"
             ItemsSource="{x:Bind ViewModel.Items,
                                  Mode=OneWay}"
@@ -25,7 +25,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border
-                        Width="750"
+                        MaxWidth="600"
                         Margin="0,0,0,12"
                         Padding="16"
                         Background="{ThemeResource CardBackground}"
@@ -36,7 +36,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="425" />
+                                <RowDefinition Height="450" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
@@ -112,7 +112,7 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Source="{Binding AspectRatio32lUri}"
-                                            Stretch="Uniform" />
+                                            Stretch="UniformToFill" />
                                     </DataTemplate>
                                 </FlipView.ItemTemplate>
                             </FlipView>

@@ -4,6 +4,7 @@ using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TgPics.Api.Client;
 using TgPics.Core.Models.Requests;

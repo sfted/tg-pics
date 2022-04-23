@@ -28,43 +28,6 @@ public partial class App : Application
     public new static App Current => (App)Application.Current;
     public IServiceProvider Services { get; private set; }
 
-
-    //public async static Task ShowDialog(string pageId, object parameter = null)
-    //{
-    //    var info = MainWindow.PageTagToTypeAndTitle(pageId);
-    //
-    //    var instanse = Activator.CreateInstance(info.Item1);
-    //
-    //    if (instanse is IExternalNavigation page)
-    //        page.OnExternalNavigatedTo(parameter);
-    //
-    //    var scroll = new ScrollViewer
-    //    {
-    //        Content = instanse,
-    //        Padding = new Thickness(0, 0, 4, 0),
-    //        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-    //        VerticalScrollBarVisibility = ScrollBarVisibility.Auto
-    //    };
-    //
-    //    var dialog = new ContentDialog()
-    //    {
-    //        XamlRoot = XamlRoot,
-    //        Title = info.Item2,
-    //        Content = scroll,
-    //        CloseButtonText = "Отмена",
-    //    };
-    //
-    //    if (instanse is IActionable actionable)
-    //    {
-    //        dialog.IsPrimaryButtonEnabled = true;
-    //        dialog.PrimaryButtonText = actionable.ActionName;
-    //        dialog.PrimaryButtonCommand = actionable.Action;
-    //        dialog.DefaultButton = ContentDialogButton.Primary;
-    //    }
-    //
-    //    await dialog.ShowAsync();
-    //}
-
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
         mainWindow = new MainWindow();

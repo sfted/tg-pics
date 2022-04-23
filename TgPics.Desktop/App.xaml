@@ -36,10 +36,10 @@
                         Color="#181818" />
                     <SolidColorBrush
                         x:Key="CardBackground"
-                        Color="#272727" />
+                        Color="#181818" />
                     <SolidColorBrush
                         x:Key="CardBorder"
-                        Color="#1c1c1c" />
+                        Color="#333" />
                     <SolidColorBrush
                         x:Key="WindowCaptionBackground"
                         Color="#181818" />

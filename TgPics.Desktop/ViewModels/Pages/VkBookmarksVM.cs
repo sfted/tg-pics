@@ -18,7 +18,7 @@ using VkNet.Utils;
 
 public interface IVkBookmarksVM
 {
-    ObservableCollection<FaveGetObjectViewModel> Items { get; }
+    ObservableCollection<FaveGetObjectVM> Items { get; }
     AsyncRelayCommand LoadMoreCommand { get; }
 }
 
@@ -36,7 +36,7 @@ public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
     VkApi api;
     int offset = 0;
 
-    public ObservableCollection<FaveGetObjectViewModel> Items { get; private set; } = new();
+    public ObservableCollection<FaveGetObjectVM> Items { get; private set; } = new();
 
     public AsyncRelayCommand LoadMoreCommand { get; private set; }
 
@@ -93,8 +93,12 @@ public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
 
                 foreach (var item in response.Response.Items)
                 {
-                    var vm = new FaveGetObjectViewModel(
-                        api, item, response.Response.Profiles, response.Response.Groups);
+                    var vm = new FaveGetObjectVM(
+                        navigationService,
+                        api,
+                        item,
+                        response.Response.Profiles,
+                        response.Response.Groups);
 
                     queue.TryEnqueue(() =>
                     {

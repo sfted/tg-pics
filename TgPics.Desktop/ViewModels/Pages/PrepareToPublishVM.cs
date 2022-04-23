@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace TgPics.Desktop.ViewModels.Pages;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,16 +9,30 @@ using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
 using TgPics.Api.Client;
+using DesktopKit.Services;
+using Microsoft.UI.Xaml.Controls;
 
-namespace TgPics.Desktop.ViewModels.Pages;
-
-public class PrepareToPublishViewModel : ViewModelBase
+public interface IPrepareToPublishVM
 {
-    public PrepareToPublishViewModel(PrepareToPublishPostViewModel post)
+    string Comment { get; set; }
+    PrepareToPublishPostViewModel Post { get; set; }
+    RelayCommand PublishCommand { get; }
+    List<PrepareToPublishPhotoViewModel> SelectedPhotos { get; set; }
+}
+
+public class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
+{
+    public PrepareToPublishVM(
+        INavigationService navigationService,
+        PrepareToPublishPostViewModel post)
     {
+        this.navigationService = navigationService;
+
         Post = post;
         PublishCommand = new(Publish);
     }
+
+    readonly INavigationService navigationService;
 
     private List<PrepareToPublishPhotoViewModel> selectedPhotos;
     private string comment;
@@ -46,7 +62,7 @@ public class PrepareToPublishViewModel : ViewModelBase
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 "tgpicstemp");
 
-            if(!Directory.Exists(tempDir))
+            if (!Directory.Exists(tempDir))
                 Directory.CreateDirectory(tempDir);
 
             var paths = new List<string>();
@@ -78,18 +94,20 @@ public class PrepareToPublishViewModel : ViewModelBase
                 MediaIds = response.Items.Select(f => f.Id).ToList()
             };
 
-            //try
-            //{
-            //    var result = await client.AddPostAsync(request);
-            //    Post.SetTagToOriginalPost();
-            //    await App.ShowSuccessfulDialog($"Пост успешно добавлен в очередь!\n" +
-            //        $"Дата и время публикации: {result.PublicationDateTime}\n" +
-            //        $"Id: {result.Id}");
-            //}
-            //catch (Exception ex)
-            //{
-            //    await App.ShowExceptionDialog(ex);
-            //}
+            try
+            {
+                var result = await client.AddPostAsync(request);
+                Post.SetTagToOriginalPost();
+                await navigationService.ShowDialogAsync(
+                    new ContentDialog().MakeSuccessful(
+                        $"Пост успешно добавлен в очередь!\n" +
+                        $"Дата и время публикации: {result.PublicationDateTime}\n" +
+                        $"Id: {result.Id}"));
+            }
+            catch (Exception ex)
+            {
+                await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+            }
         }
     }
 }
