@@ -1,12 +1,12 @@
 ﻿namespace TgPics.Desktop.Views.Pages;
 
+using DesktopKit.MVVM.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
-using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using TgPics.Desktop.ViewModels.Pages;

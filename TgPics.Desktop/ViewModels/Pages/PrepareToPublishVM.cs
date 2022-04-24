@@ -7,18 +7,18 @@ using System.Linq;
 using System.Net;
 using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
-using TgPics.Desktop.MVVM;
 using TgPics.Api.Client;
 using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
+using DesktopKit.MVVM;
 
 internal interface IPrepareToPublishVM
 {
     string Comment { get; set; }
     PrepareToPublishPostViewModel Post { get; set; }
-    RelayCommand PublishCommand { get; }
+    Command PublishCommand { get; }
     List<PrepareToPublishPhotoViewModel> SelectedPhotos { get; set; }
 }
 
@@ -56,7 +56,7 @@ internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
         set => SetProperty(ref comment, value);
     }
 
-    public RelayCommand PublishCommand { get; private set; }
+    public Command PublishCommand { get; private set; }
 
     private async void Publish()
     {

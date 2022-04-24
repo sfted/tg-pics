@@ -1,11 +1,11 @@
 ﻿namespace TgPics.Desktop.ViewModels;
 
+using DesktopKit.MVVM.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TgPics.Core.Models;
-using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using VkNet;

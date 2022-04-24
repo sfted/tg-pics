@@ -1,9 +1,8 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using DesktopKit.MVVM;
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using TgPics.Desktop.MVVM;
 
 // TODO: вынести часть логики в сервис.
 public class VkLoginPageViewModel : ViewModelBase

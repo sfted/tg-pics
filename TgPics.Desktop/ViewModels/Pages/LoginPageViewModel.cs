@@ -1,4 +1,4 @@
-﻿using TgPics.Desktop.MVVM;
+﻿using DesktopKit.MVVM;
 
 namespace TgPics.Desktop.ViewModels.Pages;
 

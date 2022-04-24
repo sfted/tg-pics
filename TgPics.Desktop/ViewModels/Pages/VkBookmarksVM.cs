@@ -1,5 +1,6 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using DesktopKit.MVVM;
 using DesktopKit.Services;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Dispatching;
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
-using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using VkNet;

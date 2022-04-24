@@ -1,5 +1,6 @@
 ﻿namespace TgPics.Desktop.Views.Pages;
 
+using DesktopKit.MVVM.Interfaces;
 using DesktopKit.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -7,7 +8,6 @@ using Microsoft.UI.Xaml.Navigation;
 using System.Linq;
 using System.Windows.Input;
 using TgPics.Desktop.Helpers.Interfaces;
-using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.ViewModels;
 using TgPics.Desktop.ViewModels.Pages;

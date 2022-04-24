@@ -1,5 +1,6 @@
 ﻿namespace TgPics.Desktop.ViewModels.Pages;
 
+using DesktopKit.MVVM;
 using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -8,7 +9,6 @@ using System.Linq;
 using TgPics.Api.Client;
 using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
-using TgPics.Desktop.MVVM;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using TgPics.Desktop.Views.Pages;
@@ -17,12 +17,12 @@ using VkNet.Model;
 
 public interface ISettingsVM
 {
-    RelayCommand LogInTgPicsCommand { get; }
-    RelayCommand LogInVkCommand { get; }
-    RelayCommand LogOutOfVkCommand { get; }
-    RelayCommand<LoginPage> ProceedLoginCommand { get; }
-    RelayCommand SaveHostCommand { get; }
-    RelayCommand SavePostingTagCommand { get; }
+    Command LogInTgPicsCommand { get; }
+    Command LogInVkCommand { get; }
+    Command LogOutOfVkCommand { get; }
+    Command<LoginPage> ProceedLoginCommand { get; }
+    Command SaveHostCommand { get; }
+    Command SavePostingTagCommand { get; }
     FaveTag SelectedPostingTag { get; set; }
     string TgPicsHost { get; set; }
     bool TgPicsIsLoggedIn { get; set; }
@@ -121,13 +121,13 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
     }
 
 
-    public RelayCommand SaveHostCommand { get; private set; }
-    public RelayCommand LogInTgPicsCommand { get; private set; }
-    public RelayCommand<LoginPage> ProceedLoginCommand { get; private set; }
-
-    public RelayCommand LogInVkCommand { get; private set; }
-    public RelayCommand LogOutOfVkCommand { get; private set; }
-    public RelayCommand SavePostingTagCommand { get; private set; }
+    public Command SaveHostCommand { get; private set; }
+    public Command LogInTgPicsCommand { get; private set; }
+    public Command<LoginPage> ProceedLoginCommand { get; private set; }
+           
+    public Command LogInVkCommand { get; private set; }
+    public Command LogOutOfVkCommand { get; private set; }
+    public Command SavePostingTagCommand { get; private set; }
 
 
     private void SaveHost() =>

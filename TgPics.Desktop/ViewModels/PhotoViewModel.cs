@@ -1,7 +1,7 @@
 ﻿namespace TgPics.Desktop.ViewModels;
 
+using DesktopKit.MVVM.Interfaces;
 using System;
-using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Utils.Extensions;
 using VkNet.Model.Attachments;
 

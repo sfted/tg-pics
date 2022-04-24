@@ -1,5 +1,7 @@
 ﻿namespace TgPics.Desktop.ViewModels;
 
+using DesktopKit.MVVM;
+using DesktopKit.MVVM.Interfaces;
 using DesktopKit.Services;
 using global::Windows.System;
 using Microsoft.UI.Xaml;
@@ -9,8 +11,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TgPics.Core.Models;
-using TgPics.Desktop.MVVM;
-using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Utils.Extensions;
 using TgPics.Desktop.Views.Pages;
@@ -28,9 +28,9 @@ internal interface IFaveGetObjectVM
     bool HasText { get; set; }
     bool IsSigned { get; set; }
     FaveGetObjectButBetter Model { get; set; }
-    RelayCommand OpenInBrowserCommand { get; }
+    Command OpenInBrowserCommand { get; }
     List<PhotoViewModel> Photos { get; set; }
-    RelayCommand PrepareToPublishCommand { get; }
+    Command PrepareToPublishCommand { get; }
     List<FaveTag> Tags { get; set; }
     string Text { get; set; }
     Uri Url { get; set; }
@@ -117,8 +117,8 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
     public List<FaveTag> Tags { get; set; }
     public Uri Url { get; set; }
 
-    public RelayCommand OpenInBrowserCommand { get; private set; }
-    public RelayCommand PrepareToPublishCommand { get; private set; }
+    public Command OpenInBrowserCommand { get; private set; }
+    public Command PrepareToPublishCommand { get; private set; }
 
     private void OpenInBrowser() => Launcher.LaunchUriAsync(Url);
 
