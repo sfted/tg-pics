@@ -1,20 +1,25 @@
 ﻿namespace TgPics.Desktop.Views.Pages;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
-using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM.Interfaces;
+using TgPics.Desktop.Services;
+using TgPics.Desktop.Values;
 using TgPics.Desktop.ViewModels.Pages;
 
 public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
 {
     public VkLoginPage()
     {
+        settingsService = App.Current.Services.GetService<ISettingsService>();
         InitializeComponent();
     }
+
+    readonly ISettingsService settingsService;
 
     public event Action ViewModelLoaded;
 
@@ -35,7 +40,7 @@ public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
         var webView2 = sender as WebView2;
         await webView2.EnsureCoreWebView2Async();
 
-        if (string.IsNullOrEmpty(Settings.Instance.Get<string>(SettingsVM.VK_TOKEN)))
+        if (string.IsNullOrEmpty(settingsService.Get<string>(SettingsKeys.VK_TOKEN)))
             webView2.CoreWebView2.CookieManager.DeleteAllCookies();
 
         ViewModel = new();

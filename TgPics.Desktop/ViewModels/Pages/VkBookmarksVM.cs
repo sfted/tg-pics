@@ -11,28 +11,35 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
+using TgPics.Desktop.Services;
+using TgPics.Desktop.Values;
 using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Utils;
 
-public interface IVkBookmarksVM
+internal interface IVkBookmarksVM
 {
     ObservableCollection<FaveGetObjectVM> Items { get; }
     AsyncRelayCommand LoadMoreCommand { get; }
 }
 
-public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
+internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
 {
-    public VkBookmarksVM(INavigationService navigationService)
+    public VkBookmarksVM(
+        INavigationService navigationService,
+        ISettingsService settingsService)
     {
         this.navigationService = navigationService;
+        this.settingsService = settingsService;
+
         LoadMoreCommand = new(LoadItems);
         InitVkApi();
         //LoadBookmarks();
     }
 
     readonly INavigationService navigationService;
+    readonly ISettingsService settingsService;
     VkApi api;
     int offset = 0;
 
@@ -47,8 +54,7 @@ public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
             api = new VkApi();
             api.Authorize(new ApiAuthParams
             {
-                AccessToken = Settings.Instance.Get<string>(
-                    SettingsVM.VK_TOKEN),
+                AccessToken = settingsService.Get<string>(SettingsKeys.VK_TOKEN),
             });
         }
         catch (Exception ex)
@@ -95,6 +101,7 @@ public class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
                 {
                     var vm = new FaveGetObjectVM(
                         navigationService,
+                        settingsService,
                         api,
                         item,
                         response.Response.Profiles,

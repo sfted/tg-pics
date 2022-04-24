@@ -3,11 +3,9 @@
 using DesktopKit.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using TgPics.Desktop.Helpers.Interfaces;
+using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using TgPics.Desktop.ViewModels.Pages;
 using TgPics.Desktop.ViewModels.Windows;
@@ -39,6 +37,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<ISettingsService, SettingsService>();
 
         services.AddTransient<IMainWindowVM, MainWindowVM>();
         services.AddTransient<IVkBookmarksVM, VkBookmarksVM>();

@@ -11,6 +11,7 @@ using System.Linq;
 using TgPics.Core.Models;
 using TgPics.Desktop.MVVM;
 using TgPics.Desktop.MVVM.Interfaces;
+using TgPics.Desktop.Services;
 using TgPics.Desktop.Utils.Extensions;
 using TgPics.Desktop.Views.Pages;
 using VkNet;
@@ -18,7 +19,7 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using static TgPics.Desktop.ViewModels.Pages.VkBookmarksVM;
 
-public interface IFaveGetObjectVM
+internal interface IFaveGetObjectVM
 {
     string AuthorName { get; set; }
     DateTime Date { get; set; }
@@ -35,16 +36,18 @@ public interface IFaveGetObjectVM
     Uri Url { get; set; }
 }
 
-public class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IFaveGetObjectVM
+internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IFaveGetObjectVM
 {
     public FaveGetObjectVM(
         INavigationService navigationService,
+        ISettingsService settingsService,
         VkApi api,
         FaveGetObjectButBetter model,
         List<VkNet.Model.User> profiles,
         List<Group> groups)
     {
         this.navigationService = navigationService;
+        this.settingsService = settingsService;
         this.api = api;
         Model = model;
 
@@ -99,6 +102,7 @@ public class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IF
     }
 
     readonly INavigationService navigationService;
+    readonly ISettingsService settingsService;
     readonly VkApi api;
 
     public FaveGetObjectButBetter Model { get; set; }
@@ -121,7 +125,7 @@ public class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IF
     // TODO: переписать
     private async void PrepareToPublish()
     {
-        var vm = new PrepareToPublishPostViewModel(api, new PrepareToPublishPost
+        var vm = new PrepareToPublishPostViewModel(settingsService, api, new PrepareToPublishPost
         {
             SourceLink = Url,
             SourceTitle = $"{GroupName}",
@@ -134,7 +138,7 @@ public class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, IF
 
         var page = new PrepareToPublishPage
         {
-            ViewModel = new(navigationService, vm)
+            ViewModel = new(navigationService, settingsService, vm)
         };
 
         var scroll = new ScrollViewer

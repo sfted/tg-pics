@@ -11,8 +11,10 @@ using TgPics.Desktop.MVVM;
 using TgPics.Api.Client;
 using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
+using TgPics.Desktop.Services;
+using TgPics.Desktop.Values;
 
-public interface IPrepareToPublishVM
+internal interface IPrepareToPublishVM
 {
     string Comment { get; set; }
     PrepareToPublishPostViewModel Post { get; set; }
@@ -20,19 +22,22 @@ public interface IPrepareToPublishVM
     List<PrepareToPublishPhotoViewModel> SelectedPhotos { get; set; }
 }
 
-public class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
+internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
 {
     public PrepareToPublishVM(
         INavigationService navigationService,
+        ISettingsService settingsService,
         PrepareToPublishPostViewModel post)
     {
         this.navigationService = navigationService;
+        this.settingsService = settingsService;
 
         Post = post;
         PublishCommand = new(Publish);
     }
 
     readonly INavigationService navigationService;
+    readonly ISettingsService settingsService;
 
     private List<PrepareToPublishPhotoViewModel> selectedPhotos;
     private string comment;
@@ -56,6 +61,7 @@ public class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
     private async void Publish()
     {
         // TODO: ПЕРЕПИСАТЬ ВСЁ!!!
+        // по-хорошему, зачем я сохраняю файл на пк? если я могу просто в озу сохранить...
         if (SelectedPhotos != null && SelectedPhotos.Count > 0)
         {
             var tempDir = Path.Combine(
@@ -79,8 +85,8 @@ public class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
             }
 
             var client = new TgPicsApi(
-                Settings.Instance.Get<string>(SettingsVM.TG_PICS_HOST),
-                Settings.Instance.Get<string>(SettingsVM.TG_PICS_TOKEN),
+                settingsService.Get<string>(SettingsKeys.TG_PICS_HOST),
+                settingsService.Get<string>(SettingsKeys.TG_PICS_TOKEN),
                 secure: false);
 
             var response = await client.UploadFilesAsync(paths);

@@ -5,23 +5,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TgPics.Core.Models;
-using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM.Interfaces;
-using TgPics.Desktop.ViewModels.Pages;
+using TgPics.Desktop.Services;
+using TgPics.Desktop.Values;
 using VkNet;
 using VkNet.Model.RequestParams.Fave;
 
-public class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
+internal class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
 {
-    public PrepareToPublishPostViewModel(VkApi api, PrepareToPublishPost post)
+    public PrepareToPublishPostViewModel(
+        ISettingsService settingsService, VkApi api, PrepareToPublishPost post)
     {
+        this.settingsService = settingsService;
         this.api = api;
+
         Model = post;
         Photos = post.Photos.Select(
             p => new PrepareToPublishPhotoViewModel(p)).ToList();
     }
 
-    private readonly VkApi api;
+    readonly ISettingsService settingsService;
+    readonly VkApi api;
 
     public PrepareToPublishPost Model { get; set; }
     public List<PrepareToPublishPhotoViewModel> Photos { get; set; }
@@ -35,7 +39,7 @@ public class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
         var postId = Convert.ToInt64(
             Regex.Match(Model.SourceLink.ToString(), @"(?<=_)(.*)").Value);
 
-        var tagId = Settings.Instance.Get<long>(SettingsVM.POSTING_TAG);
+        var tagId = settingsService.Get<long>(SettingsKeys.POSTING_TAG);
 
         api.Fave.SetTags(new FaveSetTagsParams
         {

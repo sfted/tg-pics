@@ -4,12 +4,13 @@ using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TgPics.Api.Client;
 using TgPics.Core.Models.Requests;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.MVVM;
+using TgPics.Desktop.Services;
+using TgPics.Desktop.Values;
 using TgPics.Desktop.Views.Pages;
 using VkNet;
 using VkNet.Model;
@@ -33,11 +34,14 @@ public interface ISettingsVM
 
 // TODO: вынести часть логики в сервис.
 // да даже не один сервис тут нужен.. 
-public class SettingsVM : ViewModelBase, ISettingsVM
+internal class SettingsVM : ViewModelBase, ISettingsVM
 {
-    public SettingsVM(INavigationService navigationService)
+    public SettingsVM(
+        INavigationService navigationService,
+        ISettingsService settingsService)
     {
         this.navigationService = navigationService;
+        this.settingsService = settingsService;
 
         SaveHostCommand = new(SaveHost);
         LogInTgPicsCommand = new(LogInTgPics);
@@ -47,28 +51,19 @@ public class SettingsVM : ViewModelBase, ISettingsVM
         LogOutOfVkCommand = new(LogOutOfVk);
         SavePostingTagCommand = new(SavePostingTag);
 
-        TgPicsHost = settings.Get<string>(TG_PICS_HOST);
-        TgPicsUsername = settings.Get<string>(TG_PICS_USERNAME);
+        TgPicsHost = settingsService.Get<string>(SettingsKeys.TG_PICS_HOST);
+        TgPicsUsername = settingsService.Get<string>(SettingsKeys.TG_PICS_USERNAME);
 
-        if (!string.IsNullOrEmpty(settings.Get<string>(TG_PICS_TOKEN)))
+        if (!string.IsNullOrEmpty(settingsService.Get<string>(SettingsKeys.TG_PICS_TOKEN)))
             TgPicsIsLoggedIn = true;
 
-        var vkToken = settings.Get<string>(VK_TOKEN);
+        var vkToken = settingsService.Get<string>(SettingsKeys.VK_TOKEN);
         if (!string.IsNullOrEmpty(vkToken))
             InitializeVkApi(vkToken);
     }
 
-
-    public const string TG_PICS_HOST = "tg_pics_host";
-    public const string TG_PICS_TOKEN = "tg_pics_token";
-    public const string TG_PICS_USERNAME = "tg_pics_username";
-
-    public const string VK_TOKEN = "vk_token";
-    public const string POSTING_TAG = "posting_tag";
-
-
     readonly INavigationService navigationService;
-    readonly Settings settings = Settings.Instance;
+    readonly ISettingsService settingsService;
     VkApi vkApi;
 
 
@@ -136,7 +131,7 @@ public class SettingsVM : ViewModelBase, ISettingsVM
 
 
     private void SaveHost() =>
-        settings.Set(TG_PICS_HOST, TgPicsHost);
+        settingsService.Set(SettingsKeys.TG_PICS_HOST, TgPicsHost);
 
     private async void LogInTgPics()
     {
@@ -151,7 +146,7 @@ public class SettingsVM : ViewModelBase, ISettingsVM
             CloseButtonText = "Отмена",
             PrimaryButtonCommandParameter = page
         };
-        
+
         await navigationService.ShowDialogAsync(dialog);
     }
 
@@ -167,13 +162,13 @@ public class SettingsVM : ViewModelBase, ISettingsVM
         try
         {
             var response = await client.AuthAsync(request);
-            settings.Set(TG_PICS_TOKEN, response.Token);
-            settings.Set(TG_PICS_USERNAME, response.Username);
+            settingsService.Set(SettingsKeys.TG_PICS_TOKEN, response.Token);
+            settingsService.Set(SettingsKeys.TG_PICS_USERNAME, response.Username);
             TgPicsIsLoggedIn = true;
             NotifyPropertyChanged(TgPicsUsername);
         }
         catch (Exception ex)
-        {            
+        {
             await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
         }
     }
@@ -187,13 +182,13 @@ public class SettingsVM : ViewModelBase, ISettingsVM
             Content = page,
             CloseButtonText = "Отмена"
         };
-        
+
         page.ViewModelLoaded += () =>
         {
             page.ViewModel.LoginCompleted += () =>
             {
                 dialog.Hide();
-                settings.Set(VK_TOKEN, page.ViewModel.Token);
+                settingsService.Set(SettingsKeys.VK_TOKEN, page.ViewModel.Token);
                 InitializeVkApi(page.ViewModel.Token);
             };
         };
@@ -203,12 +198,12 @@ public class SettingsVM : ViewModelBase, ISettingsVM
 
     private void LogOutOfVk()
     {
-        settings.Set(VK_TOKEN, string.Empty);
+        settingsService.Set(SettingsKeys.VK_TOKEN, string.Empty);
         VkIsLoggedIn = false;
     }
 
     private void SavePostingTag() =>
-        settings.Set(POSTING_TAG, SelectedPostingTag.Id);
+        settingsService.Set(SettingsKeys.POSTING_TAG, SelectedPostingTag.Id);
 
     private async void InitializeVkApi(string token)
     {
@@ -227,7 +222,7 @@ public class SettingsVM : ViewModelBase, ISettingsVM
             VkTags = vkApi.Fave.GetTags().Select(t => t).ToList();
 
             SelectedPostingTag = VkTags
-                .FirstOrDefault(t => t.Id == settings.Get<long>(POSTING_TAG));
+                .FirstOrDefault(t => t.Id == settingsService.Get<long>(SettingsKeys.POSTING_TAG));
         }
         catch (Exception ex)
         {

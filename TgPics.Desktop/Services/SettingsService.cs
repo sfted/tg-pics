@@ -1,20 +1,19 @@
-﻿namespace TgPics.Desktop.Helpers;
+﻿namespace TgPics.Desktop.Services;
 
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using Windows.Storage;
 
-// мне просто лень.
-// нормальные настройки (которые LocalSettings) не работали,
-// и мне пришлось выкручиваться...
-public sealed class Settings
+internal interface ISettingsService
 {
-    private static Settings instance;
-    private readonly string filename;
-    private readonly Dictionary<string, object> values;
+    T Get<T>(string key);
+    void Set(string key, object value);
+}
 
-    private Settings()
+internal class SettingsService : ISettingsService
+{
+    public SettingsService()
     {
         filename = $"{ApplicationData.Current.LocalFolder.Path}/settings.json";
 
@@ -25,16 +24,8 @@ public sealed class Settings
             values = new();
     }
 
-    public static Settings Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = new Settings();
-
-            return instance;
-        }
-    }
+    readonly string filename;
+    readonly Dictionary<string, object> values;
 
     public void Set(string key, object value)
     {

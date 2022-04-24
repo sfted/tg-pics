@@ -8,10 +8,11 @@ using System.Linq;
 using System.Windows.Input;
 using TgPics.Desktop.Helpers.Interfaces;
 using TgPics.Desktop.MVVM.Interfaces;
+using TgPics.Desktop.Services;
 using TgPics.Desktop.ViewModels;
 using TgPics.Desktop.ViewModels.Pages;
 
-public sealed partial class PrepareToPublishPage : Page,
+internal sealed partial class PrepareToPublishPage : Page,
     IViewModel<PrepareToPublishVM>,
     IExternalNavigation,
     IActionable
@@ -19,10 +20,12 @@ public sealed partial class PrepareToPublishPage : Page,
     public PrepareToPublishPage()
     {
         navigationService = App.Current.Services.GetService<INavigationService>();
+        settingsService = App.Current.Services.GetService<ISettingsService>();
         InitializeComponent();
     }
 
     readonly INavigationService navigationService;
+    readonly ISettingsService settingsService;
 
     public PrepareToPublishVM ViewModel { get; set; }
 
@@ -32,7 +35,7 @@ public sealed partial class PrepareToPublishPage : Page,
     public void OnExternalNavigatedTo(object parameter)
     {
         if (parameter is PrepareToPublishPostViewModel post)
-            ViewModel = new(navigationService, post);
+            ViewModel = new(navigationService, settingsService, post);
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)

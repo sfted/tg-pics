@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using TgPics.Desktop.MVVM.Interfaces;
 using TgPics.Desktop.ViewModels.Pages;
 
-public sealed partial class VkBookmarksPage
+internal sealed partial class VkBookmarksPage
     : Page, IViewModel<IVkBookmarksVM>
 {
     public VkBookmarksPage()
