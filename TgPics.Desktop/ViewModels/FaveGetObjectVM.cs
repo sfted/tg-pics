@@ -41,14 +41,14 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
     public FaveGetObjectVM(
         INavigationService navigationService,
         ISettingsService settingsService,
-        VkApi api,
+        IVkApiService vkApiService,
         FaveGetObjectButBetter model,
         List<VkNet.Model.User> profiles,
         List<Group> groups)
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
-        this.api = api;
+        this.vkApiService = vkApiService;
         Model = model;
 
         if (model.Post != null)
@@ -103,7 +103,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
-    readonly VkApi api;
+    readonly IVkApiService vkApiService;
 
     public FaveGetObjectButBetter Model { get; set; }
     public string GroupName { get; set; }
@@ -125,7 +125,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
     // TODO: переписать
     private async void PrepareToPublish()
     {
-        var vm = new PrepareToPublishPostViewModel(settingsService, api, new PrepareToPublishPost
+        var vm = new PrepareToPublishPostViewModel(settingsService, vkApiService, new PrepareToPublishPost
         {
             SourceLink = Url,
             SourceTitle = $"{GroupName}",

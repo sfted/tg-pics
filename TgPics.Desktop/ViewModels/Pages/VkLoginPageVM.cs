@@ -2,12 +2,13 @@
 
 using DesktopKit.MVVM;
 using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Web;
 
-// TODO: вынести часть логики в сервис.
-public class VkLoginPageViewModel : ViewModelBase
+public class VkLoginPageVM : ViewModelBase
 {
-    public VkLoginPageViewModel() =>
+    public VkLoginPageVM() =>
         AuthUrl = new Uri($"https://oauth.vk.com/authorize?client_id={VK_APP_ID}&display=popup&" +
                 $"redirect_uri=https://oauth.vk.com/blank.html&scope={SETTINGS}&response_type=token&v={API_VERSION}");
 
@@ -29,9 +30,11 @@ public class VkLoginPageViewModel : ViewModelBase
 
     public void ProceedLogin(string url)
     {
-        if (url.Contains("access_token"))
+        if (url.Contains("access_token="))
         {
             Token = GetTokenFromResponse(url);
+            Debug.WriteLine(url);
+            Debug.WriteLine(Token);
             LoginCompleted?.Invoke();
         }
     }

@@ -105,14 +105,14 @@ internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
                 var result = await client.AddPostAsync(request);
                 Post.SetTagToOriginalPost();
                 await navigationService.ShowDialogAsync(
-                    new ContentDialog().MakeSuccessful(
+                    new ContentDialog().AsSuccessful(
                         $"Пост успешно добавлен в очередь!\n" +
                         $"Дата и время публикации: {result.PublicationDateTime}\n" +
                         $"Id: {result.Id}"));
             }
             catch (Exception ex)
             {
-                await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+                await navigationService.ShowDialogAsync(new ContentDialog().AsError(ex));
             }
         }
     }

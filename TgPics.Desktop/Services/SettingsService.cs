@@ -3,6 +3,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 internal interface ISettingsService

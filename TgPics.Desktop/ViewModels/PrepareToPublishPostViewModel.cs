@@ -14,10 +14,10 @@ using VkNet.Model.RequestParams.Fave;
 internal class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
 {
     public PrepareToPublishPostViewModel(
-        ISettingsService settingsService, VkApi api, PrepareToPublishPost post)
+        ISettingsService settingsService, IVkApiService vkApiService, PrepareToPublishPost post)
     {
         this.settingsService = settingsService;
-        this.api = api;
+        this.vkApiService = vkApiService;
 
         Model = post;
         Photos = post.Photos.Select(
@@ -25,7 +25,7 @@ internal class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
     }
 
     readonly ISettingsService settingsService;
-    readonly VkApi api;
+    readonly IVkApiService vkApiService;
 
     public PrepareToPublishPost Model { get; set; }
     public List<PrepareToPublishPhotoViewModel> Photos { get; set; }
@@ -41,7 +41,7 @@ internal class PrepareToPublishPostViewModel : IModel<PrepareToPublishPost>
 
         var tagId = settingsService.Get<long>(SettingsKeys.POSTING_TAG);
 
-        api.Fave.SetTags(new FaveSetTagsParams
+        vkApiService.Api.Fave.SetTags(new FaveSetTagsParams
         {
             ItemType = VkNet.Enums.Filters.FaveType.Post,
             ItemOwnerId = ownerId,

@@ -12,8 +12,6 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.Services;
-using TgPics.Desktop.Values;
-using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Utils;
@@ -28,19 +26,21 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
 {
     public VkBookmarksVM(
         INavigationService navigationService,
-        ISettingsService settingsService)
+        ISettingsService settingsService,
+        IVkApiService vkApiService)
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
+        this.vkApiService = vkApiService;
 
+        // TODO: сделать автоподгрузку
         LoadMoreCommand = new(LoadItems);
         InitVkApi();
-        //LoadBookmarks();
     }
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
-    VkApi api;
+    readonly IVkApiService vkApiService;
     int offset = 0;
 
     public ObservableCollection<FaveGetObjectVM> Items { get; private set; } = new();
@@ -51,15 +51,20 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
     {
         try
         {
-            api = new VkApi();
-            api.Authorize(new ApiAuthParams
+            if (vkApiService.IsAuthorized)
+                return;
+
+            if (vkApiService.HasSavedToken)
+                await vkApiService.AuthorizeFromSavedAsync();
+            else
             {
-                AccessToken = settingsService.Get<string>(SettingsKeys.VK_TOKEN),
-            });
+                await vkApiService.AuthorizeAsync();
+                InitVkApi();
+            }
         }
         catch (Exception ex)
         {
-            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+            await navigationService.ShowDialogAsync(new ContentDialog().AsError(ex));
         }
     }
 
@@ -74,8 +79,8 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
                 { "extended", 1 },
                 { "offset", offset },
                 { "item_type", "post" },
-                { "access_token", api.Token },
-                { "v", VkLoginPageViewModel.API_VERSION }
+                { "access_token", vkApiService.Api.Token },
+                { "v", VkLoginPageVM.API_VERSION }
             };
 
             var scheme = new
@@ -89,7 +94,7 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
                 },
             };
 
-            var json = await api.InvokeAsync("fave.get", parameters);
+            var json = await vkApiService.Api.InvokeAsync("fave.get", parameters);
 
             var queue = DispatcherQueue.GetForCurrentThread();
 
@@ -102,7 +107,7 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
                     var vm = new FaveGetObjectVM(
                         navigationService,
                         settingsService,
-                        api,
+                        vkApiService,
                         item,
                         response.Response.Profiles,
                         response.Response.Groups);
@@ -118,7 +123,7 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
         }
         catch (Exception ex)
         {
-            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+            await navigationService.ShowDialogAsync(new ContentDialog().AsError(ex));
         }
     }
 

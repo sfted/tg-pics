@@ -6,7 +6,7 @@ using TgPics.Desktop.Views.UserControls;
 
 internal static class ContentDialogPresets
 {
-    public static ContentDialog MakeException(this ContentDialog dialog, Exception ex)
+    public static ContentDialog AsError(this ContentDialog dialog, Exception ex)
     {
         dialog.Title = "Ошибка 😢";
         dialog.Content = new ExceptionUserControl(ex);
@@ -16,7 +16,7 @@ internal static class ContentDialogPresets
         return dialog;
     }
 
-    public static ContentDialog MakeSuccessful(this ContentDialog dialog, string message)
+    public static ContentDialog AsSuccessful(this ContentDialog dialog, string message)
     {
         dialog.Title = "Успех 🤩";
         dialog.Content = message;

@@ -12,7 +12,6 @@ using TgPics.Desktop.Helpers;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using TgPics.Desktop.Views.Pages;
-using VkNet;
 using VkNet.Model;
 
 public interface ISettingsVM
@@ -32,23 +31,23 @@ public interface ISettingsVM
     string VkUsername { get; set; }
 }
 
-// TODO: вынести часть логики в сервис.
-// да даже не один сервис тут нужен.. 
 internal class SettingsVM : ViewModelBase, ISettingsVM
 {
     public SettingsVM(
         INavigationService navigationService,
-        ISettingsService settingsService)
+        ISettingsService settingsService,
+        IVkApiService vkApiService)
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
+        this.vkApiService = vkApiService;
 
         SaveHostCommand = new(SaveHost);
         LogInTgPicsCommand = new(LogInTgPics);
         ProceedLoginCommand = new(ProceedLogin);
 
         LogInVkCommand = new(LogInVk);
-        LogOutOfVkCommand = new(LogOutOfVk);
+        LogOutOfVkCommand = new(vkApiService.LogOut);
         SavePostingTagCommand = new(SavePostingTag);
 
         TgPicsHost = settingsService.Get<string>(SettingsKeys.TG_PICS_HOST);
@@ -57,14 +56,12 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
         if (!string.IsNullOrEmpty(settingsService.Get<string>(SettingsKeys.TG_PICS_TOKEN)))
             TgPicsIsLoggedIn = true;
 
-        var vkToken = settingsService.Get<string>(SettingsKeys.VK_TOKEN);
-        if (!string.IsNullOrEmpty(vkToken))
-            InitializeVkApi(vkToken);
+        ConfigureVkSection();
     }
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
-    VkApi vkApi;
+    readonly IVkApiService vkApiService;
 
 
     string tgPicsHost = string.Empty;
@@ -124,7 +121,7 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
     public Command SaveHostCommand { get; private set; }
     public Command LogInTgPicsCommand { get; private set; }
     public Command<LoginPage> ProceedLoginCommand { get; private set; }
-           
+
     public Command LogInVkCommand { get; private set; }
     public Command LogOutOfVkCommand { get; private set; }
     public Command SavePostingTagCommand { get; private set; }
@@ -150,6 +147,12 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
         await navigationService.ShowDialogAsync(dialog);
     }
 
+    private async void LogInVk()
+    {
+        await vkApiService.AuthorizeAsync();
+        ConfigureVkSection();
+    }
+
     private async void ProceedLogin(LoginPage page)
     {
         var client = new TgPicsApi(TgPicsHost, secure: false);
@@ -169,64 +172,40 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
         }
         catch (Exception ex)
         {
-            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+            await navigationService.ShowDialogAsync(new ContentDialog().AsError(ex));
         }
-    }
-
-    private async void LogInVk()
-    {
-        var page = new VkLoginPage();
-        var dialog = new ContentDialog()
-        {
-            Title = "Вход в аккаунт ВК",
-            Content = page,
-            CloseButtonText = "Отмена"
-        };
-
-        page.ViewModelLoaded += () =>
-        {
-            page.ViewModel.LoginCompleted += () =>
-            {
-                dialog.Hide();
-                settingsService.Set(SettingsKeys.VK_TOKEN, page.ViewModel.Token);
-                InitializeVkApi(page.ViewModel.Token);
-            };
-        };
-
-        await navigationService.ShowDialogAsync(dialog);
-    }
-
-    private void LogOutOfVk()
-    {
-        settingsService.Set(SettingsKeys.VK_TOKEN, string.Empty);
-        VkIsLoggedIn = false;
     }
 
     private void SavePostingTag() =>
         settingsService.Set(SettingsKeys.POSTING_TAG, SelectedPostingTag.Id);
 
-    private async void InitializeVkApi(string token)
+    private async void ConfigureVkSection()
     {
         try
         {
-            vkApi = new VkApi();
-            vkApi.Authorize(new ApiAuthParams
+            if (!vkApiService.HasSavedToken)
             {
-                AccessToken = token,
-            });
+                VkIsLoggedIn = false;
+                return;
+            }
 
-            var info = vkApi.Account.GetProfileInfo();
+            if (!vkApiService.IsAuthorized)
+            {
+                await vkApiService.AuthorizeFromSavedAsync();
+                VkIsLoggedIn = true;
+            }
+
+            var info = vkApiService.Api.Account.GetProfileInfo();
             VkUsername = $"{info.FirstName} {info.LastName}";
-            VkIsLoggedIn = true;
 
-            VkTags = vkApi.Fave.GetTags().Select(t => t).ToList();
+            VkTags = vkApiService.Api.Fave.GetTags().Select(t => t).ToList();
 
             SelectedPostingTag = VkTags
                 .FirstOrDefault(t => t.Id == settingsService.Get<long>(SettingsKeys.POSTING_TAG));
         }
         catch (Exception ex)
         {
-            await navigationService.ShowDialogAsync(new ContentDialog().MakeException(ex));
+            await navigationService.ShowDialogAsync(new ContentDialog().AsError(ex));
         }
     }
 }

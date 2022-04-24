@@ -4,14 +4,13 @@ using DesktopKit.MVVM.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Web.WebView2.Core;
 using System;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
 using TgPics.Desktop.ViewModels.Pages;
 
-public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
+public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageVM>
 {
     public VkLoginPage()
     {
@@ -23,17 +22,12 @@ public sealed partial class VkLoginPage : Page, IViewModel<VkLoginPageViewModel>
 
     public event Action ViewModelLoaded;
 
-    public VkLoginPageViewModel ViewModel { get; set; }
+    public VkLoginPageVM ViewModel { get; set; }
 
     private void OnNavigationStarting(
         WebView2 sender,
         CoreWebView2NavigationStartingEventArgs args) =>
         ViewModel.ProceedLogin(args.Uri.ToString());
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-        base.OnNavigatedFrom(e);
-    }
 
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
