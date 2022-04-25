@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:kit="using:DesktopKit.Values"
-    xmlns:local="using:TgPics.Desktop.Views.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -105,13 +104,17 @@
             ItemInvoked="OnItemInvoked"
             OpenPaneLength="250">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Главная">
+                <NavigationViewItem
+                    Content="Главная"
+                    IsEnabled="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe88a;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Очередь постов">
+                <NavigationViewItem
+                    Content="Очередь постов"
+                    IsEnabled="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xf009;" />
                     </NavigationViewItem.Icon>
@@ -126,7 +129,9 @@
                 <NavigationViewItemSeparator />
                 <!--<NavigationViewItemHeader Content="Файлы" />-->
 
-                <NavigationViewItem Content="Загруженные файлы">
+                <NavigationViewItem
+                    Content="Загруженные файлы"
+                    IsEnabled="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe226;" />
                     </NavigationViewItem.Icon>
@@ -193,13 +198,13 @@
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem
+                <!--<NavigationViewItem
                     Content="Информация"
                     Tag="about">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe88e;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
                 <NavigationViewItem
                     Content="Настройки"
                     Tag="settings">

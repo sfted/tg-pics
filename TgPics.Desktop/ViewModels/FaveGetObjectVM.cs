@@ -41,6 +41,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
     public FaveGetObjectVM(
         INavigationService navigationService,
         ISettingsService settingsService,
+        ITgPicsService tgPicsService,
         IVkApiService vkApiService,
         FaveGetObjectButBetter model,
         List<VkNet.Model.User> profiles,
@@ -48,6 +49,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
+        this.tgPicsService = tgPicsService;
         this.vkApiService = vkApiService;
         Model = model;
 
@@ -103,6 +105,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
+    readonly ITgPicsService tgPicsService;
     readonly IVkApiService vkApiService;
 
     public FaveGetObjectButBetter Model { get; set; }
@@ -138,7 +141,7 @@ internal class FaveGetObjectVM : ViewModelBase, IModel<FaveGetObjectButBetter>, 
 
         var page = new PrepareToPublishPage
         {
-            ViewModel = new(navigationService, settingsService, vm)
+            ViewModel = new(navigationService, tgPicsService, vm)
         };
 
         var scroll = new ScrollViewer

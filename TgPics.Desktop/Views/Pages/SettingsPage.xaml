@@ -64,7 +64,7 @@
 
                 <StackPanel Spacing="16">
                     <!--  адрес сервера  -->
-                    <Grid>
+                    <!--<Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -84,7 +84,7 @@
                             VerticalAlignment="Bottom"
                             Command="{x:Bind ViewModel.SaveHostCommand}"
                             Content="Сохранить" />
-                    </Grid>
+                    </Grid>-->
 
                     <!--  авторизация  -->
                     <Grid>
@@ -108,20 +108,27 @@
 
                         <!--  вход выполнен  -->
                         <StackPanel
-                            Orientation="Horizontal"
-                            Spacing="4"
+                            Spacing="8"
                             Visibility="{x:Bind ViewModel.TgPicsIsLoggedIn,
                                                 Converter={StaticResource BoolToVisibilityConverter},
                                                 Mode=OneWay}">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Text="Вход выполнен, юзернейм:" />
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                FontWeight="SemiBold"
-                                Text="{x:Bind ViewModel.TgPicsUsername}" />
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Spacing="4">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Text="Вход выполнен, юзернейм:" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind ViewModel.TgPicsUsername}" />
+                            </StackPanel>
+                            <Button
+                                Command="{x:Bind ViewModel.LogOutOfTgPicsCommand}"
+                                Content="Выйти из аккаунта"
+                                FontSize="12" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>

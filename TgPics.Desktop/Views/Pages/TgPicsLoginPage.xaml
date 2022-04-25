@@ -1,12 +1,19 @@
 ﻿<Page
-    x:Class="TgPics.Desktop.Views.Pages.LoginPage"
+    x:Class="TgPics.Desktop.Views.Pages.TgPicsLoginPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="using:TgPics.Desktop.ViewModels.Pages"
+    d:DataContext="{d:DesignInstance Type=pages:TgPicsLoginPageVM}"
     mc:Ignorable="d">
 
     <StackPanel Spacing="4">
+        <TextBox
+            Header="Хост:"
+            Text="{x:Bind ViewModel.Host,
+                          Mode=TwoWay,
+                          UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             Header="Юзернейм:"
             Text="{x:Bind ViewModel.Username,

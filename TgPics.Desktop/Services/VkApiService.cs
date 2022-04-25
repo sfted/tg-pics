@@ -3,7 +3,6 @@
 using DesktopKit.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.Values;

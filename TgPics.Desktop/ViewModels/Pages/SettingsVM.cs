@@ -6,29 +6,28 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TgPics.Api.Client;
-using TgPics.Core.Models.Requests;
+using System.Threading.Tasks;
 using TgPics.Desktop.Helpers;
 using TgPics.Desktop.Services;
 using TgPics.Desktop.Values;
-using TgPics.Desktop.Views.Pages;
 using VkNet.Model;
 
 public interface ISettingsVM
 {
     Command LogInTgPicsCommand { get; }
+    Command LogOutOfTgPicsCommand { get; }
+
     Command LogInVkCommand { get; }
     Command LogOutOfVkCommand { get; }
-    Command<LoginPage> ProceedLoginCommand { get; }
-    Command SaveHostCommand { get; }
     Command SavePostingTagCommand { get; }
-    FaveTag SelectedPostingTag { get; set; }
-    string TgPicsHost { get; set; }
+
     bool TgPicsIsLoggedIn { get; set; }
     string TgPicsUsername { get; set; }
+
     bool VkIsLoggedIn { get; set; }
-    List<FaveTag> VkTags { get; set; }
     string VkUsername { get; set; }
+    List<FaveTag> VkTags { get; set; }
+    FaveTag SelectedPostingTag { get; set; }
 }
 
 internal class SettingsVM : ViewModelBase, ISettingsVM
@@ -36,35 +35,30 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
     public SettingsVM(
         INavigationService navigationService,
         ISettingsService settingsService,
+        ITgPicsService tgPicsService,
         IVkApiService vkApiService)
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
+        this.tgPicsService = tgPicsService;
         this.vkApiService = vkApiService;
 
-        SaveHostCommand = new(SaveHost);
         LogInTgPicsCommand = new(LogInTgPics);
-        ProceedLoginCommand = new(ProceedLogin);
+        LogOutOfTgPicsCommand = new(tgPicsService.LogOut);
 
         LogInVkCommand = new(LogInVk);
         LogOutOfVkCommand = new(vkApiService.LogOut);
         SavePostingTagCommand = new(SavePostingTag);
 
-        TgPicsHost = settingsService.Get<string>(SettingsKeys.TG_PICS_HOST);
-        TgPicsUsername = settingsService.Get<string>(SettingsKeys.TG_PICS_USERNAME);
-
-        if (!string.IsNullOrEmpty(settingsService.Get<string>(SettingsKeys.TG_PICS_TOKEN)))
-            TgPicsIsLoggedIn = true;
-
-        ConfigureVkSection();
+        ConfigureSections();
     }
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
+    readonly ITgPicsService tgPicsService;
     readonly IVkApiService vkApiService;
 
 
-    string tgPicsHost = string.Empty;
     bool tgPicsIsLoggedIn = false;
     string tgPicsUsername = string.Empty;
 
@@ -73,12 +67,6 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
     List<FaveTag> vkTags;
     FaveTag selectedPostingTag;
 
-
-    public string TgPicsHost
-    {
-        get => tgPicsHost;
-        set => SetProperty(ref tgPicsHost, value);
-    }
 
     public bool TgPicsIsLoggedIn
     {
@@ -118,57 +106,53 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
     }
 
 
-    public Command SaveHostCommand { get; private set; }
     public Command LogInTgPicsCommand { get; private set; }
-    public Command<LoginPage> ProceedLoginCommand { get; private set; }
+    public Command LogOutOfTgPicsCommand { get; private set; }
 
     public Command LogInVkCommand { get; private set; }
     public Command LogOutOfVkCommand { get; private set; }
     public Command SavePostingTagCommand { get; private set; }
 
 
-    private void SaveHost() =>
-        settingsService.Set(SettingsKeys.TG_PICS_HOST, TgPicsHost);
-
     private async void LogInTgPics()
     {
-        var page = new LoginPage();
-        var dialog = new ContentDialog()
-        {
-            Title = "Вход в аккаунт",
-            Content = page,
-            PrimaryButtonText = "Войти",
-            PrimaryButtonCommand = ProceedLoginCommand,
-            DefaultButton = ContentDialogButton.Primary,
-            CloseButtonText = "Отмена",
-            PrimaryButtonCommandParameter = page
-        };
-
-        await navigationService.ShowDialogAsync(dialog);
+        await tgPicsService.AuthorizeAsync();
+        await ConfigureTgPicsSection();
     }
 
     private async void LogInVk()
     {
         await vkApiService.AuthorizeAsync();
-        ConfigureVkSection();
+        await ConfigureVkSection();
     }
 
-    private async void ProceedLogin(LoginPage page)
-    {
-        var client = new TgPicsApi(TgPicsHost, secure: false);
-        var request = new UsersAuthRequest
-        {
-            Username = page.ViewModel.Username,
-            Password = page.ViewModel.Password
-        };
+    private void SavePostingTag() =>
+        settingsService.Set(SettingsKeys.POSTING_TAG, SelectedPostingTag.Id);
 
+    private async void ConfigureSections()
+    {
+        await ConfigureTgPicsSection();
+        await ConfigureVkSection();
+    }
+
+    private async Task ConfigureTgPicsSection()
+    {
         try
         {
-            var response = await client.AuthAsync(request);
-            settingsService.Set(SettingsKeys.TG_PICS_TOKEN, response.Token);
-            settingsService.Set(SettingsKeys.TG_PICS_USERNAME, response.Username);
+            if (!tgPicsService.HasSavedToken)
+            {
+                TgPicsIsLoggedIn = false;
+                return;
+            }
+
+            if (!tgPicsService.IsAuthorized)
+            {
+                tgPicsService.AuthorizeFromSaved();
+                TgPicsIsLoggedIn = true;
+            }
+
+            TgPicsUsername = settingsService.Get<string>(SettingsKeys.TG_PICS_USERNAME);
             TgPicsIsLoggedIn = true;
-            NotifyPropertyChanged(TgPicsUsername);
         }
         catch (Exception ex)
         {
@@ -176,10 +160,7 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
         }
     }
 
-    private void SavePostingTag() =>
-        settingsService.Set(SettingsKeys.POSTING_TAG, SelectedPostingTag.Id);
-
-    private async void ConfigureVkSection()
+    private async Task ConfigureVkSection()
     {
         try
         {
@@ -202,6 +183,8 @@ internal class SettingsVM : ViewModelBase, ISettingsVM
 
             SelectedPostingTag = VkTags
                 .FirstOrDefault(t => t.Id == settingsService.Get<long>(SettingsKeys.POSTING_TAG));
+
+            VkIsLoggedIn = true;
         }
         catch (Exception ex)
         {

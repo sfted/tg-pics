@@ -4,13 +4,13 @@ using DesktopKit.MVVM.Interfaces;
 using Microsoft.UI.Xaml.Controls;
 using TgPics.Desktop.ViewModels.Pages;
 
-public sealed partial class LoginPage : Page, IViewModel<LoginPageViewModel>
+internal sealed partial class TgPicsLoginPage : Page, IViewModel<TgPicsLoginPageVM>
 {
-    public LoginPage()
+    public TgPicsLoginPage()
     {
         InitializeComponent();
         ViewModel = new();
     }
 
-    public LoginPageViewModel ViewModel { get; set; }
+    public TgPicsLoginPageVM ViewModel { get; set; }
 }

@@ -26,18 +26,18 @@ internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
 {
     public PrepareToPublishVM(
         INavigationService navigationService,
-        ISettingsService settingsService,
+        ITgPicsService tgPicsService,
         PrepareToPublishPostViewModel post)
     {
         this.navigationService = navigationService;
-        this.settingsService = settingsService;
+        this.tgPicsService = tgPicsService;
 
         Post = post;
         PublishCommand = new(Publish);
     }
 
     readonly INavigationService navigationService;
-    readonly ISettingsService settingsService;
+    readonly ITgPicsService tgPicsService;
 
     private List<PrepareToPublishPhotoViewModel> selectedPhotos;
     private string comment;
@@ -84,12 +84,10 @@ internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
                 );
             }
 
-            var client = new TgPicsApi(
-                settingsService.Get<string>(SettingsKeys.TG_PICS_HOST),
-                settingsService.Get<string>(SettingsKeys.TG_PICS_TOKEN),
-                secure: false);
+            if (!tgPicsService.IsAuthorized)
+                tgPicsService.AuthorizeFromSaved();
 
-            var response = await client.UploadFilesAsync(paths);
+            var response = await tgPicsService.Api.UploadFilesAsync(paths);
 
             var request = new PostsAddRequest
             {
@@ -102,7 +100,7 @@ internal class PrepareToPublishVM : ViewModelBase, IPrepareToPublishVM
 
             try
             {
-                var result = await client.AddPostAsync(request);
+                var result = await tgPicsService.Api.AddPostAsync(request);
                 Post.SetTagToOriginalPost();
                 await navigationService.ShowDialogAsync(
                     new ContentDialog().AsSuccessful(

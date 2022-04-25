@@ -20,10 +20,10 @@
     <None Remove="Assets\Icons\ig_icon.png" />
     <None Remove="Assets\Icons\tg_icon.png" />
     <None Remove="Utils\Converters\Converters.xaml" />
-    <None Remove="Views\Pages\LoginPage.xaml" />
     <None Remove="Views\Pages\NotFoundPage.xaml" />
     <None Remove="Views\Pages\PrepareToPublishPage.xaml" />
     <None Remove="Views\Pages\SettingsPage.xaml" />
+    <None Remove="Views\Pages\TgPicsLoginPage.xaml" />
     <None Remove="Views\Pages\VkBookmarksPage.xaml" />
     <None Remove="Views\Pages\VkLoginPage.xaml" />
     <None Remove="Views\UserControls\ExceptionUserControl.xaml" />
@@ -80,7 +80,7 @@
     <Page Update="Utils\Converters\Converters.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\Pages\LoginPage.xaml">
+    <Page Update="Views\Pages\TgPicsLoginPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

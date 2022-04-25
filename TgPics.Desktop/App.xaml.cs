@@ -38,6 +38,7 @@ public partial class App : Application
 
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ISettingsService, SettingsService>();
+        services.AddSingleton<ITgPicsService, TgPicsService>();
         services.AddSingleton<IVkApiService, VkApiService>();
 
         services.AddTransient<IMainWindowVM, MainWindowVM>();

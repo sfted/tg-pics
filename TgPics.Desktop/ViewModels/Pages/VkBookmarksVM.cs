@@ -27,10 +27,12 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
     public VkBookmarksVM(
         INavigationService navigationService,
         ISettingsService settingsService,
+        ITgPicsService tgPicsService,
         IVkApiService vkApiService)
     {
         this.navigationService = navigationService;
         this.settingsService = settingsService;
+        this.tgPicsService = tgPicsService;
         this.vkApiService = vkApiService;
 
         // TODO: сделать автоподгрузку
@@ -40,6 +42,7 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
+    readonly ITgPicsService tgPicsService;
     readonly IVkApiService vkApiService;
     int offset = 0;
 
@@ -107,6 +110,7 @@ internal class VkBookmarksVM : ViewModelBase, IVkBookmarksVM
                     var vm = new FaveGetObjectVM(
                         navigationService,
                         settingsService,
+                        tgPicsService,
                         vkApiService,
                         item,
                         response.Response.Profiles,

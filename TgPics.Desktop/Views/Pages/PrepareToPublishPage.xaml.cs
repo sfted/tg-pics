@@ -21,11 +21,13 @@ internal sealed partial class PrepareToPublishPage : Page,
     {
         navigationService = App.Current.Services.GetService<INavigationService>();
         settingsService = App.Current.Services.GetService<ISettingsService>();
+        tgPicsService = App.Current.Services.GetService<ITgPicsService>();
         InitializeComponent();
     }
 
     readonly INavigationService navigationService;
     readonly ISettingsService settingsService;
+    readonly ITgPicsService tgPicsService;
 
     public PrepareToPublishVM ViewModel { get; set; }
 
@@ -35,7 +37,7 @@ internal sealed partial class PrepareToPublishPage : Page,
     public void OnExternalNavigatedTo(object parameter)
     {
         if (parameter is PrepareToPublishPostViewModel post)
-            ViewModel = new(navigationService, settingsService, post);
+            ViewModel = new(navigationService, tgPicsService, post);
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
